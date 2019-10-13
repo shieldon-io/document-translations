@@ -1,4 +1,4 @@
-# APIs
+# Core APIs
 
 - setCaptcha
 - setChannel

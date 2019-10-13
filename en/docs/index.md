@@ -1,9 +1,34 @@
 
-Shieldon, a PHP library that provides anti-scraping and online session control for your web application. As if you are using a shield on your web applicaion to fight against bad-behavior bots, crawlers or vulnerability scanning and so on.
+Shieldon is a Web Application Firewall (WAF) for PHP. Taking less than 10 minutes only, PHP expert developers will understand how to implement Shiedon Firewall on their Web applications. The goad of this library is to make the PHP community more secure and being extremely use-to-use.
+
+- Website: [https://shieldon.io](https://shieldon.io/)
+- GitHub Repository:  [https://github.com/terrylinooo/shieldon](https://github.com/terrylinooo/shieldon)
+- **Version: 3.1.1**
+
+## Features
+
+- SEO friendly.
+- Http-type DDOS mitigation.
+- Anti-scraping.
+- Online session control.
+- Cross-site scripting (XSS) protection.
+- Interrupting vulnerability scanning.
+- Eradicating brute force attacks.
+- IP manager.
+- Protecting pages via WWW-Authenticate.
+- Detailed statistics and charts.
+- More features will come..
+
+## Firewall Panel
 
 Since 3.0.0, Shieldon starts providing a Firewall Instance and it's visualization UI called Firewall Panel. By using Shieldon Firewall, you can easy implement it on your Web application.
 
-However, if you would like to build your own WAF, combining those public APIs you are able to create one like Shieldon Firewall. Here are detailed documentations that can help you.
+![Firewall Panel](https://i.imgur.com/MELx6Vl.png)
+
+Click [here](/demo/) to view demo.
+
+- user: `demo`
+- password: `demo`
 
 ## Screenshots
 
@@ -11,25 +36,25 @@ However, if you would like to build your own WAF, combining those public APIs yo
 
 When the users or robots are trying to view many your web pages in a short period of time, they will temporarily get banned. Get unbanned by solving a Catpcha.
 
-![](https://i.imgur.com/rlsEwSG.png)
+![Temporarily Ban](https://i.imgur.com/rlsEwSG.png)
 
 
 ### Permanently Ban a User
 
 When an user has been permanently banned.
 
-![](https://i.imgur.com/Qy1sADw.png)
+![Permanently Ban](https://i.imgur.com/Qy1sADw.png)
 
 
 ### Online Session Control
 
 When an user has reached the online session limit. You can set the online session limit by using `limitSession` API.
-![](https://i.imgur.com/U02w70x.png)
-
-## License
-
-MIT
+![Session Control](https://i.imgur.com/U02w70x.png)
 
 ## Author
 
 Shieldon library is brought to you by [Terry L.](https://terryl.in) from Taiwan.
+
+## License
+
+MIT

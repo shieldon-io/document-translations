@@ -1,5 +1,3 @@
-# Shieldon in WordPress
-
 WP Shieldon is based on [Shieldon](https://github.com/terrylinooo/shieldon) library, a PHP library that provides anti-scraping and online session control for your WordPress sites.
 
 When the users or robots are trying to view many your web pages at a short period of time, they will temporarily get banned. To get unbanned by solving Catpcha. 

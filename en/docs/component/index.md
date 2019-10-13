@@ -1,4 +1,4 @@
-# Component
+# Components
 
 Shieldon components are are sets of controller that allow you to add more custom rules to allow or deny before detecting user's behavior.
 

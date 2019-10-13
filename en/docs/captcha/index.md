@@ -1,4 +1,4 @@
-# Captcha
+# Captcha Modules
 
 You can implement Captcha verification when users on your site are detected usual behavior and get temporaily banned. Users are asked for solving Captcha to get unbanned.
 

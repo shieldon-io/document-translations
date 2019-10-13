@@ -1,4 +1,4 @@
-# Driver API
+# Drivers
 
 - [MySQL](https://shieldon.io/en/docs/driver/mysql.html)
 - [SQLite](https://shieldon.io/en/docs/driver/sqlite.html)
