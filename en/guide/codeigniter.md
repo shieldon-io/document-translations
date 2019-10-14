@@ -4,7 +4,7 @@ CodeIgniter is a light-weight MVC framework. I talk the CodeIgniter 3 first beca
 
 In this guide, I will share with you the tips for implementing Shieldon Firewall on your CodeIgniter application.
 
-## Install
+## Installation
 
 Use PHP Composer:
 
@@ -17,7 +17,7 @@ Or, download it and include the Shieldon autoloader.
 require 'Shieldon/src/autoload.php';
 ```
 
-## Implement
+## Implementing
 
 ### CodeIgniter 3
 

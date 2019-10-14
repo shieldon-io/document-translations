@@ -4,7 +4,7 @@ This guide helps you get through the confusion of implementing Shieldon Firewall
 
 The following steps have been tested on Laravel 5 and 6.
 
-## Install
+## Installation
 
 Use PHP Composer:
 
@@ -20,7 +20,7 @@ require 'Shieldon/src/autoload.php';
 Implementing Shieldon Firewall on your Web Application is pretty easy by using Firewall Panel, and I highly recommend you choose this way.
 
 
-## Implement
+## Implementing
 
 For Laravel lovers, you can choose **Middleware** or **Bootstrap** to implement Shieldon Firewall on your Web application. I prefer Bootstrap personally.
 

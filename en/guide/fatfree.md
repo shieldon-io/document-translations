@@ -2,7 +2,7 @@
 
 Not like other frameworks, Fat-Free is an extremely light-weight PHP framework.
 
-## Install
+## Installation
 
 Use PHP Composer:
 
@@ -15,7 +15,7 @@ Or, download it and include the Shieldon autoloader.
 require 'Shieldon/src/autoload.php';
 ```
 
-## Implement
+## Implementing
 
 Assuming your code is supposed to be this.
 

@@ -2,7 +2,7 @@
 
 PHPixie is a mirco framework. It's version 3 documentation is vague - missing lots of important article such as route setting - and I have no time to watch their video (reading documents is 100x faster than waching a video, agree?), hence this guide is just an idea about how to implement Shieldon Firewall on your PHPixie application.
 
-## Install
+## Installation
 
 Use PHP Composer:
 
@@ -15,7 +15,7 @@ Or, download it and include the Shieldon autoloader.
 require 'Shieldon/src/autoload.php';
 ```
 
-## Implement
+## Implementing
 
 ### Steps
 

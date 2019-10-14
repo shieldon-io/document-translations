@@ -4,7 +4,7 @@ CakePHP is an open-source web framework, following the MVC approach, is one of t
 
 This guide has been tested successfully in version `3.8`, I think it can be used older versions as well.
 
-## Install
+## Installation
 
 Use PHP Composer:
 
@@ -12,7 +12,7 @@ Use PHP Composer:
 composer require terrylinooo/shieldon
 ```
 
-## Implement
+## Implementing
 
 ### CakePHP 3
 

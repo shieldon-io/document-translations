@@ -2,7 +2,7 @@
 
 FuelPHP is a simple, flexible, community driven PHP web framework.
 
-## Install
+## Installation
 
 Use PHP Composer:
 
@@ -15,7 +15,7 @@ Or, download it and include the Shieldon autoloader.
 require 'Shieldon/src/autoload.php';
 ```
 
-## Implement
+## Implementing
 
 ### Steps
 

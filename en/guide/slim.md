@@ -2,7 +2,7 @@
 
 Slim framework is one of my favorites. Since Slim is a mirco framework, implementing Shieldon Firewall is easy as well. Without further ado, let's get started.
 
-## Install
+## Installation
 
 Use PHP Composer:
 
@@ -15,7 +15,7 @@ Or, download it and include the Shieldon autoloader.
 require 'Shieldon/src/autoload.php';
 ```
 
-## Implement
+## Implementing
 
 ### Slim 3
 

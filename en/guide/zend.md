@@ -18,7 +18,7 @@ These ideas are:
 
 If your Zend application has CSRF protected, be sure to define a `_shieldon_csrf` CSRF token for Shieldon ready Middlewares.
 
-## Install
+## Installation
 
 Use PHP Composer:
 
@@ -26,7 +26,7 @@ Use PHP Composer:
 composer require terrylinooo/shieldon
 ```
 
-## Implement
+## Implementing
 
 ### Zend Expressive
 

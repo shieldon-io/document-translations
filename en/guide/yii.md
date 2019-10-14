@@ -3,7 +3,7 @@
 In this guide, I will give you some idea about how to implement Shieldon Firewall on your Yii application.
 
 
-## Install
+## Installation
 
 Use PHP Composer:
 
@@ -11,7 +11,7 @@ Use PHP Composer:
 composer require terrylinooo/shieldon
 ```
 
-## Implement
+## Implementing
 
 ### Yii 2
 

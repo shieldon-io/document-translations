@@ -6,7 +6,7 @@ Here is an example to let you know how Shieldon works and then you can manually 
 
 ## Tips
 
-### 1. Initializing Shieldon instance.
+### 1. Initialize Shieldon instance.
 
 ```php
 $shieldon = new \Shieldon\Shieldon();
