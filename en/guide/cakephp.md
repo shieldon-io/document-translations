@@ -1,6 +1,6 @@
 # CakePHP
 
-CakePHP is an open-source web framework, following the MVC approach, is one of the most popular framework in PHP community.
+CakePHP is an open-source web framework, following the MVC approach, which is one of the most popular frameworks in the PHP community.
 
 This guide has been tested successfully in version `3.8`, I think it can be used older versions as well.
 
@@ -16,7 +16,7 @@ composer require terrylinooo/shieldon
 
 ### CakePHP 3
 
-The step 1 and step 2 are applied to the same file located at `/config/route.php`.
+Step 1 and step 2 are applied to the same file located at `/config/route.php`.
 
 #### 1. Register a Middleware.
 
