@@ -1,4 +1,5 @@
-Shieldon is a Web Application Firewall (WAF) for PHP. Taking less than 10 minutes only, PHP expert developers will understand how to implement Shiedon Firewall on their Web applications. The goal of this library is to make the PHP community more secure and being extremely use-to-use.
+
+Shieldon is a Web Application Firewall (WAF) for PHP. Taking less than 10 minutes only, PHP expert developers will understand how to implement Shieldon Firewall on their Web applications. The goal of this library is to make the PHP community more secure and being extremely easy-to-use.
 
 - Website: [https://shieldon.io](https://shieldon.io/)
 - GitHub Repository:  [https://github.com/terrylinooo/shieldon](https://github.com/terrylinooo/shieldon)
