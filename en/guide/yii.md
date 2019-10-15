@@ -62,6 +62,13 @@ use yii\web\Controller;
 
 class FirewallPanelController extends Controller
 {
+    public function beforeAction($action)
+    {
+        $this->enableCsrfValidation = false;
+
+        return parent::beforeAction($action);
+    }
+
     /**
      * The entry point of the Firewall Panel.
      *
@@ -74,6 +81,7 @@ class FirewallPanelController extends Controller
 
         // Get into the Firewall Panel.
         $controlPanel = new \Shieldon\FirewallPanel($firewall);
+
         $controlPanel->entry();
         exit;
     }

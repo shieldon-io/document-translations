@@ -176,6 +176,8 @@ Default settings:
 | cookie_domain | string | " |
 | cookie_value | string | "1" |
 
+The explanation of settings you cand find [here](http://shieldon.io/en/docs/configuration.html).
+
 ### setProperties
 
 - *param* array `$settings`
