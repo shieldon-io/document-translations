@@ -73,4 +73,4 @@ Although it has a basic login protection.
 
 Below is a diagram for the Shieldon instance lifecycle. You don’t need to fully understand everything going on right now, but as you want to customize your own components or CAPTCHA modules or more, it will be a useful reference.
 
-![Shieldon Lifecycle](https://i.imgur.com/iLAU7DQ.png)
+![Shieldon Lifecycle](https://i.imgur.com/BPAtwOY.png)
