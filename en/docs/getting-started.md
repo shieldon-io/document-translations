@@ -23,7 +23,6 @@ require 'Shieldon/src/autoload.php';
 
 ## Implementing
 
-
 ### Popular Frameworks
 
 Here are the guides of integrating with the popular PHP frameworks.
@@ -68,3 +67,10 @@ $controlPanel->entry();
 
 Put the code on the Controller and the URL that only you know.
 Although it has a basic login protection.
+
+
+## Lifecycle Diagram
+
+Below is a diagram for the Shieldon instance lifecycle. You don’t need to fully understand everything going on right now, but as you want to customize your own components or CAPTCHA modules or more, it will be a useful reference.
+
+![Shieldon Lifecycle](https://i.imgur.com/iLAU7DQ.png)
