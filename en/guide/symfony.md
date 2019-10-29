@@ -2,7 +2,7 @@
 
 Symfony is a set of reusable PHP components and a PHP framework to build web applications, APIs, microservices and web services.
 
-This guide has been tested successfully in version `4.3`, I think it can be used older versions as well.
+This guide has been tested successfully in version `4.3`, but I think it can be used older versions as well.
 
 Symfony doesn't have a middleware concept, therefore you can create a parent controller to implement Shieldon Firewall just like the steps in our [CodeIgniter guide](https://shieldon.io/en/guide/codeigniter.html).
 
@@ -20,7 +20,7 @@ composer require terrylinooo/shieldon
 
 ### Bootstrap
 
-#### 1. Before initializing Kernal
+#### 1. Before initializing Kernel
 
 In your `config/bootstrap.php`, after this line:
 
@@ -36,8 +36,6 @@ Add the following code:
 |--------------------------------------------------------------------------
 |
 | Shieldon Firewall will watch all HTTP requests coming to your website.
-| Running Shieldon Firewall before initializing Laravel will avoid possible
-| conflicts with Laravel's built-in functions.
 */
 
 if (isset($_SERVER['REQUEST_URI'])) {
@@ -95,7 +93,7 @@ class FirewallPanelController extends AbstractController
         $firewall = \Shieldon\Container::get('firewall');
         $controlPanel = new \Shieldon\FirewallPanel($firewall);
 
-        // If your have `symfony/security-csrf` installed.
+        // If you have `symfony/security-csrf` installed.
         $csrf = $this->container->get('security.csrf.token_manager');
         $token = $csrf->refreshToken('key');
 
