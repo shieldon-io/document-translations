@@ -7,12 +7,12 @@ Slim framework is one of my favorites. Since Slim is a mirco framework, implemen
 Use PHP Composer:
 
 ```php
-composer require terrylinooo/shieldon
+composer require shieldon/shieldon
 ```
 
 Or, download it and include the Shieldon autoloader.
 ```php
-require 'Shieldon/src/autoload.php';
+require 'Shieldon/autoload.php';
 ```
 
 ## Implementing

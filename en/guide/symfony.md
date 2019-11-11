@@ -13,7 +13,7 @@ If you don't like to initialize Shieldon Firewall in a parent controller, here a
 Use PHP Composer:
 
 ```php
-composer require terrylinooo/shieldon
+composer require shieldon/shieldon
 ```
 
 ## Implementing

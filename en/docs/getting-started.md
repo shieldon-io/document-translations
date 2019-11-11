@@ -14,11 +14,11 @@ Before using Shieldon Firewall on your Web application you must meet the basic s
 
 Use PHP Composer:
 ```shell
-composer require terrylinooo/shieldon
+composer require shieldon/shieldon
 ```
 Or, download it and include the Shieldon autoloader.
 ```php
-require 'Shieldon/src/autoload.php';
+require 'Shieldon/autoload.php';
 ```
 
 ## Implementing

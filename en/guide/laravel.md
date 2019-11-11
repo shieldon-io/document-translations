@@ -9,12 +9,12 @@ The following steps have been tested on Laravel 5 and 6.
 Use PHP Composer:
 
 ```php
-composer require terrylinooo/shieldon
+composer require shieldon/shieldon
 ```
 
 Or, download it and include the Shieldon autoloader.
 ```php
-require 'Shieldon/src/autoload.php';
+require 'Shieldon/autoload.php';
 ```
 
 Implementing Shieldon Firewall on your Web Application is pretty easy by using Firewall Panel, and I highly recommend you choose this way.

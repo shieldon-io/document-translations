@@ -9,7 +9,7 @@ This guide has been tested successfully in version `3.8`, I think it can be used
 Use PHP Composer:
 
 ```php
-composer require terrylinooo/shieldon
+composer require shieldon/shieldon
 ```
 
 ## Implementing

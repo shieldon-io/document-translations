@@ -23,7 +23,7 @@ If your Zend application has CSRF protected, be sure to define a `_shieldon_csrf
 Use PHP Composer:
 
 ```php
-composer require terrylinooo/shieldon
+composer require shieldon/shieldon
 ```
 
 ## Implementing

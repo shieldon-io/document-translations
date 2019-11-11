@@ -17,6 +17,11 @@ Shieldon is a Web Application Firewall (WAF) for PHP. Taking less than 10 minute
 - IP manager.
 - Protecting pages via WWW-Authenticate.
 - Detailed statistics and charts.
+- Send notifications when specific events occurred. Supported modules:
+    - Slack
+    - Telegram
+    - Line Notify
+- Web UI for System firewall - iptables and ip6tables.
 - More features will come...
 
 ## Installation
@@ -24,12 +29,12 @@ Shieldon is a Web Application Firewall (WAF) for PHP. Taking less than 10 minute
 Use PHP Composer:
 
 ```php
-composer require terrylinooo/shieldon
+composer require shieldon/shieldon
 ```
 
 Or, download it and include the Shieldon autoloader.
 ```php
-require 'Shieldon/src/autoload.php';
+require 'Shieldon/autoload.php';
 ```
 
 ## Implementing
@@ -49,7 +54,7 @@ Here are the guides of integrating with the popular PHP frameworks.
 
 ## Firewall Panel
 
-Since 3.0.0, Shieldon starts providing a Firewall Instance, and it's visualization UI called Firewall Panel. By using Shieldon Firewall, you can easily implement it on your Web application.
+Shieldon provides a visualization UI called Firewall Panel. By using Shieldon Firewall, you can easily implement it on your Web application.
 
 ![Firewall Panel](https://i.imgur.com/MELx6Vl.png)
 
@@ -79,6 +84,12 @@ You can see the real-time data here if `Online Session Limit` is enabled.
 You can temporarily ban a user here.
 
 ![](https://i.imgur.com/5Vg2brX.png)
+
+#### Responsive
+
+Shieldon's Firewall Panel is fully responsive, and you can manage it when you are not in front of your computer, using your mobile phone at any time.
+
+![Responsive Firewall Panel](https://i.imgur.com/fUz9lZD.png)
 
 
 ### Dialog

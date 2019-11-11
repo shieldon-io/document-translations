@@ -8,7 +8,7 @@ In this guide, I will give you some idea about how to implement Shieldon Firewal
 Use PHP Composer:
 
 ```php
-composer require terrylinooo/shieldon
+composer require shieldon/shieldon
 ```
 
 ## Implementing
