@@ -10,6 +10,7 @@
 - setFilters
 - setProperty
 - setProperties
+- setMessenger
 - setIp
 - getCurrentUrl
 - managedBy
@@ -199,6 +200,20 @@ $realIp = $_SERVER['HTTP_CF_CONNECTING_IP'];
 // If you use a CDN serive on your website, 
 // make sure to cature the real vistor IP, overwise users will get banned.
 $shieldon->setIp($realIp);
+```
+
+### setMessenger
+
+- *param* MessengerInterface `$instance`
+- *return* self
+
+```php
+$apiKey = '981441296:AAGCcgv_NETMdWQCBTaMOk_yoMfax5EV7YQ';
+$channel = '@your_channel';
+
+$telegramMessenger = new \Messenger\Telegram($apiKey, $channel);
+
+$shieldon->setMessenger($telegramMessenger);
 ```
 
 ### setView
