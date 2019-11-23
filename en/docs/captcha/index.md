@@ -5,7 +5,7 @@ You can implement Captcha verification when users on your site are detected usua
 - [ReCaptcha](https://shieldon.io/en/docs/captcha/recaptcha.html)
 - [Image](https://shieldon.io/en/docs/captcha/image.html)
 
-You can use multiple Captcha modules at a time. More Captcha modules will be added in the feature.
+You can use multiple Captcha modules at a time. More Captcha modules will be added in the future.
 
 ![](https://i.imgur.com/rlsEwSG.png)
 
