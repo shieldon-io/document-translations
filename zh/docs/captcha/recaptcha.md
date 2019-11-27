@@ -23,7 +23,7 @@ $shieldon->setCaptcha($captchaInstance);
 
 ![](https://i.imgur.com/UTcle2h.png)
 
-Make sure you are using v3 `site key` and `secret key`. If you use v2 key here, it won't work.
+務必使用 v3 版本的 `網站金鑰` 和 `密鑰`。如果您在這裡使用 v2 版的會沒有作用。
 
 ```php
 
@@ -37,9 +37,9 @@ $captchaInstance = new \Shieldon\Captcha\Recaptcha($captchaConfig);
 $shieldon->setCaptcha($captchaInstance);
 ```
 
-### Language
+### 語言
 
-You can specific the language for the UI by passed `lang`.
+傳送 `lang`的值，您可以指定 UI 顯示的語言。
 
 ```php
 $captchaConfig = [

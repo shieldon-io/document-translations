@@ -39,7 +39,7 @@ $shieldon->setCaptcha($captchaInstance);
 
 ### Language
 
-You can specific the language for the UI by passed `lang`.
+You can specific the language for the UI by passing `lang`.
 
 ```php
 $captchaConfig = [

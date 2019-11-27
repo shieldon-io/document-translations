@@ -26,3 +26,8 @@ Default setting in blacklist.
 ## Strict Mode
 
 - Visitors with empty user-agent information will be blocked.
+
+```
+$agent->setStrict(true);
+```
+

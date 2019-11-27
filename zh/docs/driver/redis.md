@@ -14,7 +14,7 @@ Inject a Redis instance to Shieldon data driver.
 $redisDriverInstance = new \Shieldon\Driver\RedisDriver($redisInstance));
 ```
 
-Example:
+例：
 
 ```php
 $redisInstance = new \Redis();
@@ -23,4 +23,4 @@ $redisInstance->connect('127.0.0.1', 6379);
 $shieldon->setDriver(new \Shieldon\Driver\RedisDriver($redisInstance));
 ```
 
-That's it.
+大概是這樣囉。

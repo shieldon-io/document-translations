@@ -82,3 +82,8 @@ $robot->addItem('google', '.googlebot.com');
 ## Strict Mode
 
 - IP resolved hostname and IP address must match.
+
+```
+$robot->setStrict(true);
+```
+

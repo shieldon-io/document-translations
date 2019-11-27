@@ -6,13 +6,13 @@
 - *param* boolean $debug  [default: false]
 - *return* self
 
-You have to inject a PDO instance to Shieldon data driver.
+您需要注入一個 PDO 實例到 Shieldon 資料驅動器中。
 
 ```php
 new \Shieldon\Driver\SqliteDriver($pdoInstance);
 ```
 
-Example:
+例：
 
 ```php
 $dbLocation = APPPATH . 'cache/shieldon.sqlite3';
@@ -20,6 +20,6 @@ $pdoInstance = new \PDO('sqlite:' . $dbLocation);
 $shieldon->setDriver(new \Shieldon\Driver\SqliteDriver($pdoInstance));
 ```
 
-## Note
+## 提醒
 
-Do not set $debug to true, overwise MysqlDriver will throw an error when data tables not exist.
+請不要把 $debug 設為 true，不然 SqliteDriver 會在資料表不存在時丟出錯誤。

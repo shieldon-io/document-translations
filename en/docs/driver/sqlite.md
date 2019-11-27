@@ -22,4 +22,4 @@ $shieldon->setDriver(new \Shieldon\Driver\SqliteDriver($pdoInstance));
 
 ## Note
 
-Do not set $debug to true, overwise MysqlDriver will throw an error when data tables not exist.
+Do not set $debug to true, overwise SqliteDriver will throw an error when data tables not exist.

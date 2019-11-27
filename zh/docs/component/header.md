@@ -9,6 +9,11 @@ $header = new \Shieldon\Component\Header();
 $shieldon->setComponent($header);
 ```
 
-## Strict Mode
+## 嚴格模式
 
-- Visitors without common header information will be blocked.
+- 未帶有一般標頭資訊的訪客會被封鎖。
+
+```
+$header->setStrict(true);
+```
+

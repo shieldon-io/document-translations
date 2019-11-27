@@ -2,4 +2,4 @@
 
 ## `Shieldon\Driver\MemcacheDriver`
 
-Not yet ready.
+還沒準備好唷。

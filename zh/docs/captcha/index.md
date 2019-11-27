@@ -1,18 +1,17 @@
-# Captcha Modules
+# 驗證碼模組
 
-You can implement Captcha verification when users on your site are detected usual behavior and get temporaily banned. Users are asked for solving Captcha to get unbanned.
+當使用者在您的網站上被偵測到不尋常行為時被封鎖，您可以運用驗證碼檢驗方式。使用者被要求解決驗證碼來解除封鎖。
 
 - [ReCaptcha](https://shieldon.io/en/docs/captcha/recaptcha.html)
 - [Image](https://shieldon.io/en/docs/captcha/image.html)
 
-You can use multiple Captcha modules at a time. More Captcha modules will be added in the future.
+您可以同時使用多個驗證碼模組。更多驗證碼模組在未來會被陸續加入。
 
 ![](https://i.imgur.com/rlsEwSG.png)
 
-### Note
+### 注意
 
-If you have implemented CSRF protection on whole site, be sure to pass your CSRF token into Captcha form.
-
+如果您有部署了 CRSF 防護在全網站上，務必傳送您的 CSRF 權杖到驗證碼表單中。
 
 ```php
 $shieldon->setCaptcha(new /Shieldon/Captcha/Csrf([

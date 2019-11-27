@@ -1,26 +1,26 @@
-# Self-build WAF
+# 自建 WAF
 
-If you would like to build your own WAF, by combining the public APIs of Shieldon library, you are able to create one like Shieldon Firewall.
+假如您想要建立自己的 WAF，藉由組裝 Shieldon 套件裡這些公開的 API，您就能夠建立一個類似 Shieldon 防火牆的 WAF。
 
-Here is an example to let you know how Shieldon works and then you can manually implement Shieldon on your Web Application.
+這裡是一個例子讓您瞭解 Shieldon 的運作方式。接著您可以手動地部署 Shieldon 到您的網站應用程式上。
 
-## Lifecycle Diagram
+## 生命週期表
 
-Below is a diagram for the Shieldon instance lifecycle. You don’t need to fully understand everything going on right now, but as you want to customize your own components or CAPTCHA modules or more, it will be a useful reference.
+以下是一個是示意圖，描述 Shieldon 實例的生命週期。您不用全盤瞭解目前運作的一切，但是當您想要自定義組件或 CAPTCHA 模組或更多時，它將是一個有用的參考。
 
-![Lifecycle Diagram](https://i.imgur.com/9RLHFG1.png)
+![生命週期表](https://i.imgur.com/9RLHFG1.png)
 
-## Tips
+## 提示
 
-### 1. Initialize Shieldon instance.
+### 1. 初始化 Shieldon 實例
 
 ```php
 $shieldon = new \Shieldon\Shieldon();
 ```
 
-### 2. Set up a data driver.
+### 2. 設定一個資料驅動器
 
-In this example, I use SQLite as the data driver.
+在這個例子。我用 SQLite 作為資料驅動器。
 
 ```php
 $dbLocation = APPPATH . 'cache/shieldon.sqlite3';
@@ -28,33 +28,33 @@ $pdoInstance = new \PDO('sqlite:' . $dbLocation);
 $shieldon->setDriver(new \Shieldon\Driver\SqliteDriver($pdoInstance));
 ```
 
-### 3. Set up the components.
+### 3. 設定組件
 
-Shieldon components are rule sets to allow or deny session permanently. In this example, we load the TrustedBot component to allow popular search engines, bots not in the rule set will go into the checking process (next components and filters).
+Shieldon 組件是規則集合，用來永久地許可或者拒絕工作階段。在這個例子中，我們載入 TrustedBot 組件來許可受歡迎的搜尋引擎，機器人不在規則集中的話，將會進入檢查的處理過程。（接下來的組件及過濾器）。
 
 ```php
 $shieldon->setComponent(new \Shieldon\Component\TrustedBot());
 ```
 
-### 4. Set up a channel. *(not required)*
+### 4. 設定頻道 *(非必要)*
 
-You can ignore this setting if you only use one Shieldon on your web application. This is for multiple instances.
+您可以忽略掉這個設定，如果您只使用一個 Shieldon 在您的網站應用程式上。此設定是為了多實例用。
 
 ```
 $shieldon->setChannel('web_project');
 ```
 
-### 5. Limit the online session number. *(not required)*
+### 5. 限制線上工作階段的數字 *(非必要)*
 
-Only allow 10 sessions to view current page. The default expire time is 300 seconds.
+只許可 10 個工作階段瀏覽目前的網頁。預設的過期時間是 300 秒。
 
 ```
 $shieldon->limitSession(10, 300);
 ```
 
-### 6. Load the Captcha modules.
+### 6. 載入驗證碼模組
 
-Set a Captcha servie. For example: Google recaptcha.
+設定一個驗證碼服務。舉例： Google reCAPTCHA
 
 ```
 $shieldon->setCaptcha(new \Shieldon\Captcha\Recaptcha([
@@ -63,7 +63,7 @@ $shieldon->setCaptcha(new \Shieldon\Captcha\Recaptcha([
 ]));
 ```
 
-### 7. Start protecting your website
+### 7. 開始報護您的網站
 
 ```
 $result = $shieldon->run();
@@ -71,28 +71,28 @@ $result = $shieldon->run();
 if ($result !== $shieldon::RESPONSE_ALLOW) {
     if ($shieldon->captchaResponse()) {
 
-        // Unban current session.
+        // 解封目前的工作階段
         $shieldon->unban();
     }
-    // Output the result page with HTTP status code 200.
+    // 輸出結果頁，HTTP 回應碼設為 200。
     $shieldon->output(200);
 }
 ```
 
-That's it.
+就是這樣囉。
 
-## Firewall Panel
+## 防火牆面板
 
-Althogh you are not using Firewall instance, but you can still use Firewall Panel to view the statistics and charts.
+即使您沒有使用防火牆實例，但您仍可以使用防火牆面板來檢示數據和圖表。
 
-Try the code below:
+試試以下的程式碼：
 
 ```
 $shieldon = \Shieldon\Container::get('shieldon');
 
-// Get into the Firewall Panel.
+// 進入防火牆面板
 $controlPanel = new \Shieldon\FirewallPanel($shieldon);
 $controlPanel->entry();
 ```
 
-Use the default user and password to login.
+用預設的帳號及密碼登入即可。

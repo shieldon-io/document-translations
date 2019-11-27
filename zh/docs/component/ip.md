@@ -11,7 +11,7 @@ $shieldon->setComponent($ip);
 
 ### inRange
 
-- *param* string `$ip` IP to check in IPV4 and IPV6 format
+- *param* string `$ip` 要檢查是否在範圍內的 IP 位址
 - *param* mixed `$range` IP/CIDR netmask
 - *return* boolean
 
@@ -22,7 +22,7 @@ $result = $ip->inRange('123.22.33.44', '123.22.33.1/24');
 ```
 ### setAllowedList
 
-- *param* array `$ips` Ip array.
+- *param* array `$ips` IP 陣列。
 - *return* void
 
 ```php
@@ -39,7 +39,7 @@ $shieldon->setComponent($ip);
 
 ### setAllowedItem
 
-- *param* string `$ip` Single Ip address
+- *param* string `$ip` 單一 IP 位址。
 - *return* void
 
 ```php
@@ -60,7 +60,7 @@ $list = $ip->getAllowedList();
 ```
 ### setDeniedList
 
-- *param* array `$ips` IP array.
+- *param* array `$ips` IP 陣列。
 - *return* void
 
 ```php
@@ -77,7 +77,7 @@ $shieldon->setComponent($ip);
 
 ### setDeniedItem
 
-- *param* string `$ip` Single Ip address
+- *param* string `$ip` 單一 IP 位址。
 - *return* void
 
 ```php

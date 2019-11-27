@@ -1,11 +1,11 @@
-# File
+# 檔案
 
 ## `Shieldon\Driver\FileDriver`
 
-- *param* string $directory Directory path.
+- *param* string $directory 目錄的路徑。
 - *return* self
 
-Example:
+例：
 
 ```php
 $shieldon->setDriver(
@@ -13,4 +13,4 @@ $shieldon->setDriver(
 );
 ```
 
-That's it.
+大概是這樣囉。

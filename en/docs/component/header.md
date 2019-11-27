@@ -12,3 +12,8 @@ $shieldon->setComponent($header);
 ## Strict Mode
 
 - Visitors without common header information will be blocked.
+
+```
+$header->setStrict(true);
+```
+

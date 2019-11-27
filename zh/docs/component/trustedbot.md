@@ -9,9 +9,9 @@ $robot = new \Shieldon\Component\TrustedBot();
 $shieldon->setComponent($robot);
 ```
 
-Default setting in whitelist.
+在白名單內的預設值。
 
-| name | Rdns |
+| 名稱 | 反解主機名稱 |
 | --- | --- |
 | google | .googlebot.com |
 | google | .google.com |
@@ -28,7 +28,7 @@ Default setting in whitelist.
 
 ### setStrict
 
-- *param* boolean `$bool` Set true to enble strict mode, false to disable it overwise.
+- *param* boolean `$bool` 設為 true 以啟用嚴格模式, false 反之亦然。
 - *return* void
 
 ```php
@@ -71,14 +71,18 @@ $result = $robot->isBing();
 
 ### addItem
 
-- *param* string `$userAgent` Part of user-agent string
-- *param* string `$rdns` IP resolved hostname.
+- *param* string `$userAgent` 部分的用使用者代理的字串。
+- *param* string `$rdns` IP 反解的主機名稱。
 - *return* void
 
 ```php
 $robot->addItem('google', '.googlebot.com');
 ```
 
-## Strict Mode
+## 嚴格模式
 
-- IP resolved hostname and IP address must match.
+```
+$robot->setStrict(true);
+```
+
+- IP 反解主機名稱 (RDNS) 和 IP 位址須互相吻合。

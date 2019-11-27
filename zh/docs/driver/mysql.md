@@ -3,16 +3,16 @@
 ## `Shieldon\Driver\MysqlDriver`
 
 - *param* PDO $pdo
-- *param* boolean $debug  [default: false]
+- *param* boolean $debug  [預設值: false]
 - *return* self
 
-You have to inject a PDO instance to Shieldon data driver.
+您需要注入一個 PDO 實例到 Shieldon 資料驅動器中。
 
 ```php
 $mysqlDriverInstance = new \Shieldon\Driver\MysqlDriver($pdoInstance);
 ```
 
-Example:
+例：
 
 ```php
 $db = [
@@ -32,4 +32,4 @@ $pdoInstance = new \PDO(
 $shieldon->setDriver( new \Shieldon\Driver\MysqlDriver($pdoInstance));
 ```
 
-That's it.
+大概是這樣囉。

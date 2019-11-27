@@ -1,6 +1,6 @@
-# Components
+# 組件
 
-Shieldon components are are sets of controller that allow you to add more custom rules to allow or deny before detecting user's behavior.
+Shieldon 組件是控制器的集合，讓您能增加客製化的規格，在開始偵測使用者的行為之前許可或拒絕使用者。
 
 - [TrustedBot](https://shieldon.io/en/docs/component/trustedbot.html)
 - [Ip](https://shieldon.io/en/docs/component/ip.html)
@@ -10,23 +10,23 @@ Shieldon components are are sets of controller that allow you to add more custom
 
 ## `TrustedBot`
 
-TrustedBot component allows popular search engines to crawl your site without limit. please load this commponent at least .
+TrustedBot 組件能讓受歡迎的搜尋引擎來索引您的網站不受限制。請至少載入這個組件。
 
 ## `Ip`
 
-Ip component allows you to set single IPs or IP ranges in the whitelist or the blacklist.
+Ip component 能讓您設定單一 IP 位址或者 IP 範圍在白名單或黑名單之中。
 
 ## `UserAgent`
 
-UserAgent component blocks well-known bad bots by default. You can add your list in UserAgent's blacklist.
+UserAgent 組件預設把廣為人知的不良機器人為為黑名登。您可以在 UserAgent 的黑名單中增加您的名單。
 
 ## `Header`
 
-Header component blocks vistors without common header information in strict mode, 
+Header 組件在嚴格模式時封鎖未帶有常見標題資訊的訪客。
 
 ## `Rdns`
 
-Rdns component blocks vistors without Rdns recond or Rdns not match to IP address in strict mode.
+Rdns 組件在嚴格模式時封鎖 IP 和反解域名不符合的訪客。
 
 ---
 
@@ -34,7 +34,7 @@ Rdns component blocks vistors without Rdns recond or Rdns not match to IP addres
 
 ### setStrict
 
-- *param* boolean `$bool` Set true to enble strict mode, false to disable it overwise.
+- *param* boolean `$bool` `$bool` 設為 true 以啟用嚴格模式, false 反之亦然。
 - *return* void
 
 ```php
@@ -69,7 +69,7 @@ $list = $component->getDeniedList();
 
 ### removeItem
 
-Remove item from denied list and allowed list (if exists)
+在許可清單和拒絕清單中移除項目 (如果有存在的話)
 
 - *param* string `$string`
 - *return* void
