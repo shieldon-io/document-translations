@@ -1,26 +1,26 @@
 # CakePHP
 
-CakePHP is an open-source web framework, following the MVC approach, which is one of the most popular frameworks in the PHP community.
+CakePHP 是一套用 MVC 架構方法的開放原始碼框架，也是在 PHP 社群中最受歡迎的框架其中一支。
 
-This guide has been tested successfully in version `3.8`, I think it can be used older versions as well.
+此篇指南已於 `3.8` 版本成功測試，我認為在較舊版本也同樣適用。
 
-## Installation
+## 安裝
 
-Use PHP Composer:
+使用 PHP Composer:
 
 ```php
 composer require shieldon/shieldon
 ```
 
-## Implementing
+## 部暑
 
 ### CakePHP 3
 
-Step 1 and step 2 are applied to the same file located at `/config/route.php`.
+步驟 1 及步驟 2 套用在同樣檔案位於 `/config/route.php`。
 
-#### 1. Register a Middleware.
+#### 1. 註冊一個 Middleware
 
-As always, a middleware is ready for you.
+如同其它框架，已經有一個專為 CakePHP 架構的 Middleware 可以直接使用。
 
 ```php
 /**
@@ -34,7 +34,7 @@ $routes->registerMiddleware(
 $routes->applyMiddleware('firewall');
 ```
 
-#### 2. Define a Route for Firewall Panel.
+#### 2. 定義一個路由給防火牆面板
 
 ```php
 /**
@@ -47,9 +47,9 @@ $routes->connect('/firewall/panel/', [
 ```
 
 
-#### 3. Create a Controller for Firewall Panel.
+#### 3. 建立一個 Controller 給防火牆面板
 
-Create a controller named `FirewallPanelController` and then add the following code into it.
+建立一個名為 `FirewallPanelController` 的 Controller，並放進如以下的程式碼：
 
 ```php
 $firewall = \Shieldon\Container::get('firewall');
@@ -58,7 +58,7 @@ $controlPanel->entry();
 exit;
 ```
 
-If you have CSRF enabled, add these lines:
+如果您有啟用 CSRF 保護機制，加此這幾行：
 
 ```php
 $controlPanel->csrf(
@@ -67,7 +67,7 @@ $controlPanel->csrf(
 );
 ```
 
-The full example will look like this:
+完整的例子看起來像是這樣：
 
 ```php
 <?php
@@ -98,7 +98,7 @@ class FirewallPanelController extends AppController
 }
 ```
 
-You can access the Firewall Panel by `/firewall/panel`, to see the page, go to this URL in your browser.
+您能夠使用網址路徑 `/firewall/panel` 能連上防火牆面板。
 
 ```bash
 https://for.example.com/firewall/panel
