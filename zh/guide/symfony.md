@@ -109,3 +109,5 @@ You can access the Firewall Panel by `/firewall/panel`, to see the page, go to t
 ```bash
 https://for.example.com/firewall/panel
 ```
+
+The default login is `shieldon_user` and `password` is `shieldon_pass`. After logging in the Firewall Panel, the first thing you need to do is to change the login and password.
