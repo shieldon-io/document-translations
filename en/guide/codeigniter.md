@@ -4,6 +4,8 @@ CodeIgniter is a light-weight MVC framework. I talk the CodeIgniter 3 first beca
 
 In this guide, I will share with you the tips for implementing Shieldon Firewall on your CodeIgniter application.
 
+![Firewall in CodeIgniter Framework](https://shieldon.io/images/home/codeigniter-framework-firewall.png)
+
 ## Installation
 
 Use PHP Composer:
@@ -77,7 +79,7 @@ class MY_Controller extends CI_Controller
 
 *Reminder*
 
-For the best security, both the system and any application folders should be placed above web root so that they are not directly accessible via a browser.
+For the best security, both the system and application folders should be placed above web root so that they are not directly accessible via a browser.
 
 If your application folder is in the same level with index.php, please move the `$storage` to a safe place. For example:
 
@@ -174,3 +176,7 @@ You can access the Firewall Panel by `/firewallPanel`, to see the page, go to th
 ```bash
 https://for.example.com/firewallPanel
 ```
+
+The default login is `shieldon_user` and `password` is `shieldon_pass`. After logging in the Firewall Panel, the first thing you need to do is to change the login and password.
+
+Shieldon Firewall will start watching your website if it get enabled in `Deamon` setting section, make sure you have set up the settings correctly.

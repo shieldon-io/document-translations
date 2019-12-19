@@ -4,6 +4,8 @@ This guide helps you get through the confusion of implementing Shieldon Firewall
 
 The following steps have been tested on Laravel 5 and 6.
 
+![Firewall in Laravel Framework](https://shieldon.io/images/home/laravel-framework-firewall.png)
+
 ## Installation
 
 Use PHP Composer:
@@ -120,3 +122,15 @@ Route::any('/your/secret/place/', function() {
 ```
 
 If you adopt this way, Shieldon Firewall will run in Global scope. But no worry, you can set up the exclusion list for the URLs you want Shieldon Firewall ignore them.
+
+That's it.
+
+You can access the Firewall Panel by `/your/secret/place/`, to see the page, go to this URL in your browser.
+
+```bash
+https://for.example.com/your/secret/place/
+```
+
+The default login is `shieldon_user` and `password` is `shieldon_pass`. After logging in the Firewall Panel, the first thing you need to do is to change the login and password.
+
+Shieldon Firewall will start watching your website if it get enabled in `Deamon` setting section, make sure you have set up the settings correctly.

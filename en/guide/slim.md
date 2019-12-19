@@ -2,6 +2,8 @@
 
 Slim framework is one of my favorites. Since Slim is a mirco framework, implementing Shieldon Firewall is easy as well. Without further ado, let's get started.
 
+![Firewall in Slim Framework](https://shieldon.io/images/home/slim-framework-firewall.png)
+
 ## Installation
 
 Use PHP Composer:
@@ -133,3 +135,15 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 ```
+
+That's it.
+
+You can access the Firewall Panel by `/example/fiewall/panel`, to see the page, go to this URL in your browser.
+
+```bash
+https://for.example.com/example/fiewall/panel
+```
+
+The default login is `shieldon_user` and `password` is `shieldon_pass`. After logging in the Firewall Panel, the first thing you need to do is to change the login and password.
+
+Shieldon Firewall will start watching your website if it get enabled in `Deamon` setting section, make sure you have set up the settings correctly.

@@ -2,6 +2,8 @@
 
 PHPixie is a mirco framework. It's version 3 documentation is vague - missing lots of important article such as route setting - and I have no time to watch their video (reading documents is 100x faster than waching a video, agree?), hence this guide is just an idea about how to implement Shieldon Firewall on your PHPixie application.
 
+![Firewall in PHPixie Framework](https://shieldon.io/images/home/phpixie-framework-firewall.png)
+
 ## Installation
 
 Use PHP Composer:
@@ -63,3 +65,7 @@ You can access the Firewall Panel by `/firewall/panel`, to see the page, go to t
 ```bash
 https://for.example.com/firewall/panel
 ```
+
+The default login is `shieldon_user` and `password` is `shieldon_pass`. After logging in the Firewall Panel, the first thing you need to do is to change the login and password.
+
+Shieldon Firewall will start watching your website if it get enabled in `Deamon` setting section, make sure you have set up the settings correctly.

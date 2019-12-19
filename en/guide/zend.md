@@ -4,6 +4,8 @@ Zend framework officially provides two types of skeleton - Zend MVC and Zend Exp
 
 No matter which skeleton you are using, this guide might give you some ideas on how to implement Shieldon Firewall, not sure which way is considered best practice to Zend, you can pick one you prefer.
 
+![Firewall in Zend Framework](https://shieldon.io/images/home/zend-framework-firewall.png)
+
 These ideas are:
 
 - PSR-7 Middleware. (Prior to Zend 3.1.0)
@@ -165,8 +167,14 @@ In your `module.config.php`, add the code as below.
 ],
 ```
 
+That's it.
+
 You can access the Firewall Panel by `/firewall/panel`, to see the page, go to this URL in your browser.
 
 ```bash
 https://for.example.com/firewall/panel
 ```
+
+The default login is `shieldon_user` and `password` is `shieldon_pass`. After logging in the Firewall Panel, the first thing you need to do is to change the login and password.
+
+Shieldon Firewall will start watching your website if it get enabled in `Deamon` setting section, make sure you have set up the settings correctly.

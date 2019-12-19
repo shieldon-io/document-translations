@@ -2,6 +2,8 @@
 
 In this guide, I will give you some idea about how to implement Shieldon Firewall on your Yii application.
 
+![Firewall in Yii Framework](https://shieldon.io/images/home/yii-framework-firewall.png)
+
 
 ## Installation
 
@@ -89,7 +91,7 @@ class FirewallPanelController extends Controller
 
 ```
 
-Make sure that Pretty URL is on in your `config/web.php`
+Make sure that `enablePrettyUrl` is true in your `config/web.php`
 
 ```php
 'urlManager' => [
@@ -100,8 +102,14 @@ Make sure that Pretty URL is on in your `config/web.php`
 ],
 ```
 
+That's it.
+
 You can access the Firewall Panel by `/firewall-panel`, to see the page, go to this URL in your browser.
 
 ```bash
 https://for.example.com/firewall-panel
 ```
+
+The default login is `shieldon_user` and `password` is `shieldon_pass`. After logging in the Firewall Panel, the first thing you need to do is to change the login and password.
+
+Shieldon Firewall will start watching your website if it get enabled in `Deamon` setting section, make sure you have set up the settings correctly.

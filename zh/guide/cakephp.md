@@ -1,8 +1,10 @@
-# CakePHP
+# Firewall in CakePHP
 
 CakePHP 是一套用 MVC 架構方法的開放原始碼框架，也是在 PHP 社群中最受歡迎的框架其中一支。
 
 此篇指南已於 `3.8` 版本成功測試，我認為在較舊版本也同樣適用。
+
+![CakePHP　框架防火牆](https://shieldon.io/images/home/cakephp-framework-firewall.png)
 
 ## 安裝
 
@@ -12,7 +14,13 @@ CakePHP 是一套用 MVC 架構方法的開放原始碼框架，也是在 PHP �
 composer require shieldon/shieldon
 ```
 
-## 部暑
+或者下載後引入 Shieldon 自動載入器。
+
+```php
+require 'Shieldon/autoload.php';
+```
+
+## 部署
 
 ### CakePHP 3
 
@@ -98,8 +106,14 @@ class FirewallPanelController extends AppController
 }
 ```
 
+就是這樣囉。
+
 您能夠使用網址路徑 `/firewall/panel` 能連上防火牆面板。
 
-```bash
+```
 https://for.example.com/firewall/panel
 ```
+
+預設的登入帳號是 `shieldon_user` 而密碼是 `shieldon_pass`。在您登入防火牆面板之後，第一件該做的事情就是更改帳號及密碼。
+
+如果在設定區塊中的 `守護進程` 有啟用的話，Shieldon 將會開始監看您的網站，請確定您已經把設定值都設定正確。

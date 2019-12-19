@@ -1,44 +1,51 @@
 # Yii
 
-In this guide, I will give you some idea about how to implement Shieldon Firewall on your Yii application.
+在這個指南中，我會給您一些關於如何部署 Shieldon 防火牆在您的 Yii 應用程式的點子。
 
+![Yii 框架防火牆](https://shieldon.io/images/home/yii-framework-firewall.png)
 
-## Installation
+## 安裝
 
-Use PHP Composer:
+使用 PHP Composer:
 
 ```php
 composer require shieldon/shieldon
 ```
 
-## Implementing
+或者下載後引入 Shieldon 自動載入器。
+
+```php
+require 'Shieldon/autoload.php';
+```
+
+## 部署
 
 ### Yii 2
 
-#### 1. Before initializing Kernal
+#### 1. 開初始化核心之前
 
-In your `public/index.php`, before this line:
+在您的 `config/bootstrap.php` 中，在這一行之後：
 
 ```php
 require __DIR__ . '/../vendor/yiisoft/yii2/Yii.php';
 ```
 
-Add the following code:
+加入以下的程式碼：
 
 ```php
 /*
 |--------------------------------------------------------------------------
-| Run The Shieldon Firewall
+| 運行 Shieldon 防火牆
 |--------------------------------------------------------------------------
 |
-| Shieldon Firewall will watch all HTTP requests coming to your website.
-| Running Shieldon Firewall before initializing Yii will avoid possible
-| conflicts with Yii's built-in functions.
+| Shieldon 防火牆將開始監看所有進入您網站的 HTTP 請求。
+| 在初始化 Yii 之前運行 Shieldon 防火牆會避免和 Yii 內建功能的衝突。
+| 
 */
 
 if (isset($_SERVER['REQUEST_URI'])) {
 
-    // Notice that this directory must be writable.
+    // 注意這個目錄必須可寫入。
     $firewallstorage = __DIR__ . '/../runtime/shieldon';
 
     $firewall = new \Shieldon\Firewall($firewallstorage);
@@ -47,11 +54,11 @@ if (isset($_SERVER['REQUEST_URI'])) {
 }
 ```
 
-#### 2.  Define a Route for Firewall Panel.
+#### 2. 為防火牆面板定義路由。
 
-Create a controller named `FirewallPanelController`. 
+建立一個控制器叫作 `FirewallPanelController`。
 
-The content would be the code below:
+內容如下：
 
 ```php
 <?php
@@ -70,16 +77,16 @@ class FirewallPanelController extends Controller
     }
 
     /**
-     * The entry point of the Firewall Panel.
+     * 這是我們的防火牆面板的入口。
      *
      * @return string
      */
     public function actionIndex()
     {
-        // Get Firewall instance from Shieldon Container.
+        // 從 Shieldon 容器中取得防火牆的實例。
         $firewall = \Shieldon\Container::get('firewall');
 
-        // Get into the Firewall Panel.
+        // 進入防火牆面板。
         $controlPanel = new \Shieldon\FirewallPanel($firewall);
 
         $controlPanel->entry();
@@ -89,7 +96,7 @@ class FirewallPanelController extends Controller
 
 ```
 
-Make sure that Pretty URL is on in your `config/web.php`
+確認 `enablePrettyUrl` 在您的 `config/web.php` 是啟用狀態。
 
 ```php
 'urlManager' => [
@@ -100,8 +107,12 @@ Make sure that Pretty URL is on in your `config/web.php`
 ],
 ```
 
-You can access the Firewall Panel by `/firewall-panel`, to see the page, go to this URL in your browser.
+您可以由 `/firewall-panel` 連接防火牆面板，在瀏覽器上打上網址：
 
 ```bash
 https://for.example.com/firewall-panel
 ```
+
+預設的登入帳號是 `shieldon_user` 而密碼是 `shieldon_pass`。在您登入防火牆面板之後，第一件該做的事情就是更改帳號及密碼。
+
+如果在設定區塊中的 `守護進程` 有啟用的話，Shieldon 將會開始監看您的網站，請確定您已經把設定值都設定正確。

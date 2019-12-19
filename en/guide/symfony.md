@@ -8,6 +8,8 @@ Symfony doesn't have a middleware concept, therefore you can create a parent con
 
 If you don't like to initialize Shieldon Firewall in a parent controller, here are the steps that called Bootstrap mode you can try.
 
+![Firewall in Symfony Framework](https://shieldon.io/images/home/symfony-framework-firewall.png)
+
 ## Installation
 
 Use PHP Composer:
@@ -104,6 +106,8 @@ class FirewallPanelController extends AbstractController
 }
 ```
 
+That's it.
+
 You can access the Firewall Panel by `/firewall/panel`, to see the page, go to this URL in your browser.
 
 ```bash
@@ -111,3 +115,5 @@ https://for.example.com/firewall/panel
 ```
 
 The default login is `shieldon_user` and `password` is `shieldon_pass`. After logging in the Firewall Panel, the first thing you need to do is to change the login and password.
+
+Shieldon Firewall will start watching your website if it get enabled in `Deamon` setting section, make sure you have set up the settings correctly.

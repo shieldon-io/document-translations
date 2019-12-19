@@ -1,23 +1,24 @@
 # Fat-Free
 
-Not like other frameworks, Fat-Free is an extremely light-weight PHP framework.
+不像其它的框架，Fat-Free 是極輕量的 PHP 框架。
 
-## Installation
+## 安裝
 
-Use PHP Composer:
+使用 PHP Composer:
 
 ```php
 composer require shieldon/shieldon
 ```
 
-Or, download it and include the Shieldon autoloader.
+或者下載後引入 Shieldon 自動載入器。
+
 ```php
 require 'Shieldon/autoload.php';
 ```
 
-## Implementing
+## 部署
 
-Assuming your code is supposed to be this.
+假設您的程式碼應該是長這樣。
 
 ```php
 <?php
@@ -34,29 +35,28 @@ $f3->run();
 
 ```
 
-### Steps
+### 步驟
 
-#### 1. Initialize Shieldon Firewall
+#### 1. 初始化 Shieldon 防火牆
 
-After this line:
+在這一行之後：
 
 ```php
 require dirname(__DIR__) . '/vendor/autoload.php';
 ```
-Add the following code:
+加入以下程式碼
 
 ```php
-// Run The Shieldon Firewall
+// 運行 Shieldon 防火牆。
 new \Shieldon\Integration\Bootstrapper();
 ```
 
-Please create a wriable directory named it with `shieldon` at above directory, Shieldon Firewall stores data in that.
+請建立一個可寫入的目錄並命名為 `shieldon`，位於上一層目錄，Shieldon 防火牆在那兒存放資料。
 
-
-#### 2.  Define a Route for Firewall Panel.
+#### 2. 為防火牆面板定義路由。
 
 ```php
-// The Shieldon Firewall's entry point.
+// Shieldon 防火牆的進入點。
 $f3->route('GET|POST /firewall/panel/', function() {
     $firewall = \Shieldon\Container::get('firewall');
     $controlPanel = new \Shieldon\FirewallPanel($firewall);
@@ -65,10 +65,14 @@ $f3->route('GET|POST /firewall/panel/', function() {
 });
 ```
 
-Now, you can access the Firewall Panel via URL:
+就是這樣囉。
 
-```bash
+現在，您可以連接上防火牆面板，透過網址：
+
+```
 https://for.example.com/firewall/panel
 ```
 
-Shieldon Firewall will start watching your website if it get enabled in `Deamon` setting section, make sure you have set up the settings correctly.
+預設的登入帳號是 `shieldon_user` 而密碼是 `shieldon_pass`。在您登入防火牆面板之後，第一件該做的事情就是更改帳號及密碼。
+
+如果在設定區塊中的 `守護進程` 有啟用的話，Shieldon 將會開始監看您的網站，請確定您已經把設定值都設定正確。

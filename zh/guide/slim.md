@@ -1,48 +1,51 @@
 # Slim
 
-Slim framework is one of my favorites. Since Slim is a mirco framework, implementing Shieldon Firewall is easy as well. Without further ado, let's get started.
+Slim 是我喜愛的框架其中之一，由於 Slim 是一個微型的框架，部署 Shieldon 防火牆也是很容易的。話不多說，我們開始使用吧。
 
-## Installation
+![Slim 框架防火牆](https://shieldon.io/images/home/slim-framework-firewall.png)
 
-Use PHP Composer:
+## 安裝
+
+使用 PHP Composer:
 
 ```php
 composer require shieldon/shieldon
 ```
 
-Or, download it and include the Shieldon autoloader.
+或者下載後引入 Shieldon 自動載入器。
+
 ```php
 require 'Shieldon/autoload.php';
 ```
 
-## Implementing
+## 部署
 
 ### Slim 3
 
-#### Middleware
+#### 中介程式
 
-Shieldon supports most popular PHP frameworks, following its design pattern, Slim is one of them, so that there is a Middleware for Slim 3 already.
+Shieldon 支援許多受歡迎的 PHP 框架，依循它們的設計模式，而 Slim 是其中之一，所以我們已經準備好一個可使用的 Slim 3 的中介程式。
 
 ```php
 $app->add(new \Shieldon\Integration\Slim\Slim3Middleware);
 ```
 
-Reminer: If you have Slim-Csrf middleware implemented, make sure the order should look like this:
+提醒：如果您有部署 Slim-Csrf 中介程式，確定一下順序應該像這樣：
 
 ```php
 $app->add(new \Shieldon\Integration\Slim\Slim3Middleware);
 $app->add(new \Slim\Csrf\Guard);
 ```
 
-Notice: Slim-Csrf is no longer support Slim 3, if you would like to use it on Slim 3, be sure to install the older vision.
+提醒: Slim-Csrf 已經不再支援 Slim 3，如果您要用在 Slim 3，確定裝的是舊版本：
 
 ```bash
 composer require slim/csrf:0.8.3
 ```
 
-#### Route
+#### 路由
 
-This route is the entry of Firewall Panel.
+這個路由是防火牆面板的入口。
 
 ```php
 $app->map(['GET', 'POST'], '/example/fiewall/panel', function (Request $request, Response $response, array $args) {
@@ -58,15 +61,15 @@ $app->map(['GET', 'POST'], '/example/fiewall/panel', function (Request $request,
 
 ### Slim 4
 
-#### Middleware
+#### 中介程式
 
-Load Slim4Middleware at the first place.
+在第一個位置載入 Slim4Middleware。
 
 ```php
 $app->add(new \Shieldon\Integration\Slim\Slim4Middleware());
 ```
 
-So, your middleware.php probably looks like this:
+因此,，您的 middleware.php 也許長的像是這樣：
 
 ```php
 return function (App $app) {
@@ -75,9 +78,9 @@ return function (App $app) {
 };
 ```
 
-#### Route
+#### 路由
 
-This route is the entry of Firewall Panel.
+這個路由是防火牆面板的入口。
 
 ```php
 $app->map(['GET', 'POST'], '/example/fiewall/panel', function (Request $request, Response $response, array $args) {
@@ -93,7 +96,7 @@ $app->map(['GET', 'POST'], '/example/fiewall/panel', function (Request $request,
 });
 ```
 
-Make sure to change all your routes to support Post method for making Captcha form worked, otherwise you will face this error.
+確認把您所有的路由改成支援 Post 模式以讓驗證碼表單可以正常運作，不然您會遇到這種錯誤。
 
 ```json
 {
@@ -105,31 +108,44 @@ Make sure to change all your routes to support Post method for making Captcha fo
 }
 ```
 
-#### Bootstrapper
+#### 引導程式
 
-There is an another way to avoid changing support method. It is `Bootstrapper` located at `Shieldon\Integration` namespace.
+這是另一種方法可以避免改變支援的模式。它是位於 `Shieldon\Integration` 命名空間的 `Bootstrapper` 類別。
 
-In the `public/index.php`, find this line:
+在 `public/index.php` 中，找這一行：
+
 ```php
 require __DIR__ . '/../vendor/autoload.php';
 ```
-Replace it with:
+取而代之：
 
 ```php
 require __DIR__ . '/../vendor/autoload.php';
 
-// Implement Shieldon Firewall.
+// 部署 Shieldon 防火牆。
 new \Shieldon\Integration\Bootstrapper();
 ```
 
-That's it.
+大致上是這樣囉。
 
-*Reminder*:
+*提醒*：
 
-To prevent `session_start` conflicts, please start session safely in your `SessionMiddleware`
+為了預防 `session_start` 的衝突，請在您的  `SessionMiddleware` 中加入安全的判斷式：
 
 ```php
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 ```
+
+就是這樣囉。
+
+現在，您可以連接上防火牆面板，透過網址：
+
+```
+https://for.example.com/example/fiewall/panel
+```
+
+預設的登入帳號是 `shieldon_user` 而密碼是 `shieldon_pass`。在您登入防火牆面板之後，第一件該做的事情就是更改帳號及密碼。
+
+如果在設定區塊中的 `守護進程` 有啟用的話，Shieldon 將會開始監看您的網站，請確定您已經把設定值都設定正確。
