@@ -29,7 +29,7 @@ if (strpos($_SERVER['REQUEST_URI'], 'faq/online-session-limit.html') !== false) 
 
 當進入這個網頁時而使用者人數已達到限制，類似以下截圖的對話框會展示給您。
 
-![](https://i.imgur.com/U02w70x.png)
+![](https://i.imgur.com/cAOKIY8.png)
 
 <div id="faq-2"></div>
 

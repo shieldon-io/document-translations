@@ -109,7 +109,8 @@ When a user has been permanently banned.
 #### Online Session Control
 
 When a user has reached the online session limit. You can set the online session limit by using `limitSession` API.
-![](https://i.imgur.com/U02w70x.png)
+
+![](https://i.imgur.com/cAOKIY8.png)
 
 ## Author
 

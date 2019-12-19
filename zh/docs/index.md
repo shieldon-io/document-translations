@@ -111,7 +111,7 @@ Shieldon 的防火牆面板是全響應式的，所以您可以使用手機管�
 
 當使用者到了線上工作階段的限制。
 
-![](https://i.imgur.com/U02w70x.png)
+![](https://i.imgur.com/cAOKIY8.png)
 
 ## 作者
 

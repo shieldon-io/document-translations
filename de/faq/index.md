@@ -28,7 +28,7 @@ if (strpos($_SERVER['REQUEST_URI'], 'faq/online-session-limit.html') !== false) 
 
 When entering this page and the user number has reached the limitation, the dialog that is similar to following screenshot will be showed to you. 
 
-![](https://i.imgur.com/U02w70x.png)
+![](https://i.imgur.com/cAOKIY8.png)
 
 <div id="faq-2"></div>
 
