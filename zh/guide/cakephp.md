@@ -1,4 +1,4 @@
-# Firewall in CakePHP
+# CakePHP
 
 CakePHP 是一套用 MVC 架構方法的開放原始碼框架，也是在 PHP 社群中最受歡迎的框架其中一支。
 
