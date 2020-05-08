@@ -25,17 +25,22 @@ WP Shieldon 是基於 [Shieldon](https://github.com/terrylinooo/shieldon) 套件
 
 ## 截圖
 
+
 使用者被要求輸入驗驗碼以繼續瀏覽。
 
-![](https://i.imgur.com/T78FlVR.png)
+![](https://i.imgur.com/oU3Cm6W.png)
 
 設定頁面
 
-![](https://i.imgur.com/qYbTvb5.png)
+![](https://i.imgur.com/6wd46Av.png)
 
-IP 管理員
+規則表
 
-![](https://i.imgur.com/WAEI27e.png)
+![](https://i.imgur.com/it7pyqo.png)
+
+運行狀態
+
+![](https://i.imgur.com/gjR7Bbm.png)
 
 
 ***看看我其它的 WordPress 作品***
