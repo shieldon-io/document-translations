@@ -6,26 +6,12 @@ No matter which skeleton you are using, this guide might give you some ideas on 
 
 ![Firewall in Zend Framework](https://shieldon.io/images/home/zend-framework-firewall.png)
 
-These ideas are:
-
-- PSR-7 Middleware. (Prior to Zend 3.1.0)
-- PSR-15 Middleware (Starting in Zend 3.1.0)
-- Bootstrapper.
-
-```php
-\Shieldon\Integration\Zend\Psr7Middleware
-\Shieldon\Integration\Zend\Psr15Middleware
-\Shieldon\Integration\Bootstrapper
-```
-
-If your Zend application has CSRF protected, be sure to define a `_shieldon_csrf` CSRF token for Shieldon ready Middlewares.
-
 ## Installation
 
 Use PHP Composer:
 
 ```php
-composer require shieldon/shieldon
+composer require shieldon/shieldon ^2
 ```
 
 ## Implementing
@@ -36,10 +22,67 @@ This is an example that shows you using a PSR-15 Middleware in Zend Expressive s
 
 #### 1. Define a Middleware.
 
+```php
+class FirewallMiddleware
+{
+    /**
+     * The absolute path of the storage where stores Shieldon generated data.
+     *
+     * @var string
+     */
+    protected $storage = '';
+
+    /**
+     * Constructor.
+     *
+     * @param string $storage See property `storage` explanation.
+     */
+    public function __construct($storage = '')
+    {
+        // shieldon folder is placed above wwwroot for best security, this folder must be writable.
+        $this->storage = dirname($_SERVER['SCRIPT_FILENAME']) . '/../data';
+
+        if ('' !== $storage) {
+            $this->storage = $storage;
+        }
+    }
+
+    /**
+     * Shieldon middleware invokable class.
+     *
+     * @param ServerRequest  $request PSR-7 request
+     * @param RequestHandler $delegat PSR-15 request handler
+     *
+     * @return Response
+     */
+    public function process(Request $request, RequestHandler $handler): Response
+    {
+        $firewall = new \Shieldon\Firewall\Firewall($request, $response);
+        $firewall->configure($this->storage);
+
+        $firewall->getShieldon()->setCaptcha(
+            new \Shieldon\Captcha\Csrf([
+                'name' => '_shieldon_csrf',
+                'value' => $request->getAttribute('_shieldon_csrf'),
+            ])
+        );
+
+        $response = $firewall->run();
+
+        if ($response->getStatusCode() !== 200) {
+            $httpResolver = new \Shieldon\Firewall\HttpResolver();
+            $httpResolver($response);
+        }
+
+        return $handler->handle($request);
+    }
+}
+```
+
 In your `pipeline.php`, add this line:
 
 ```php
-$app->pipe(\Shieldon\Integration\Zend\Psr15Middleware::class);
+$app->pipe(\FirewallMiddleware:class);
 ```
 
 #### 2.  Defind a Handler.
@@ -66,9 +109,9 @@ class FirewallPanelHandler implements RequestHandlerInterface
 {
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $firewall = \Shieldon\Container::get('firewall');
-        $controlPanel = new \Shieldon\FirewallPanel($firewall);
-        $controlPanel->entry();
+        $panel = new \Shieldon\Firewall\Panel();
+        // The base url for the control panel.
+        $panel->entry('/firewall/panel');
 
         return new Response();
     }
@@ -108,12 +151,17 @@ Add the following code:
 */
 
 if (isset($_SERVER['REQUEST_URI'])) {
+	// This directory must be writable.
+    $storage = __DIR__ . '/../data/shieldon';
 
-    $firewallstorage = __DIR__ . '/../data/shieldon';
+    $firewall = new \Shieldon\Firewall\Firewall();
+    $firewall->configure($storage);
+    $response = $firewall->run();
 
-    $firewall = new \Shieldon\Firewall($firewallstorage);
-    $firewall->restful();
-    $firewall->run();
+    if ($response->getStatusCode() !== 200) {
+        $httpResolver = new \Shieldon\Firewall\HttpResolver();
+        $httpResolver($response);
+    }
 }
 ```
 
@@ -140,13 +188,10 @@ class FirewallPanelController extends AbstractActionController
      */
     public function indexAction()
     {
-       // Get Firewall instance from Shieldon Container.
-       $firewall = \Shieldon\Container::get('firewall');
-
-       // Get into the Firewall Panel.
-       $controlPanel = new \Shieldon\FirewallPanel($firewall);
-       $controlPanel->entry();
-       exit;
+        $panel = new \Shieldon\Firewall\Panel();
+        // The entry point must be the same as the route defined.
+        $panel->entry('/firewall/panel');
+        exit;
     }
 }
 ```
@@ -172,7 +217,7 @@ That's it.
 You can access the Firewall Panel by `/firewall/panel`, to see the page, go to this URL in your browser.
 
 ```bash
-https://for.example.com/firewall/panel
+https://yourwebsite.com/firewall/panel
 ```
 
 The default login is `shieldon_user` and `password` is `shieldon_pass`. After logging in the Firewall Panel, the first thing you need to do is to change the login and password.

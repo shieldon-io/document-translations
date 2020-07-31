@@ -9,12 +9,7 @@ FuelPHP is a simple, flexible, community driven PHP web framework.
 Use PHP Composer:
 
 ```php
-composer require shieldon/shieldon
-```
-
-Or, download it and include the Shieldon autoloader.
-```php
-require 'Shieldon/autoload.php';
+composer require shieldon/shieldon ^2
 ```
 
 ## Implementing
@@ -42,13 +37,18 @@ Add the following code:
 
 if (isset($_SERVER['REQUEST_URI'])) {
 
-	// Notice that this directory must be writable.
+	// This directory must be writable.
 	// We put it in the `fuel/app/tmp` directory.
-    $firewallstorage = __DIR__ . '/tmp/shieldon';
+    $storage = __DIR__ . '/tmp/shieldon';
 
-    $firewall = new \Shieldon\Firewall($firewallstorage);
-    $firewall->restful();
-    $firewall->run();
+    $firewall = new \Shieldon\Firewall\Firewall();
+    $firewall->configure($storage);
+    $response = $firewall->run();
+
+    if ($response->getStatusCode() !== 200) {
+        $httpResolver = new \Shieldon\Firewall\HttpResolver();
+        $httpResolver($response);
+    }
 }
 ```
 
@@ -58,10 +58,9 @@ Now, modify your `fuel/app/config/routes.php` and add the following code.
 
 ```php
 'firewall/panel' => function () {
-    $firewall = \Shieldon\Container::get('firewall');
-    $controlPanel = new \Shieldon\FirewallPanel($firewall);
-    $controlPanel->entry();
-    exit;
+    $panel = new \Shieldon\Firewall\Panel();
+    // The entry point must be the same as the route defined.
+    $panel->entry('firewall/panel');
 }
 ```
 

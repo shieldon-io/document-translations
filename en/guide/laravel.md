@@ -14,11 +14,6 @@ Use PHP Composer:
 composer require shieldon/shieldon
 ```
 
-Or, download it and include the Shieldon autoloader.
-```php
-require 'Shieldon/autoload.php';
-```
-
 Implementing Shieldon Firewall on your Web Application is pretty easy by using Firewall Panel, and I highly recommend you choose this way.
 
 

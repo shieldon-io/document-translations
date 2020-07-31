@@ -39,15 +39,20 @@ Add the following code:
 |
 | Shieldon Firewall will watch all HTTP requests coming to your website.
 */
-
 if (isset($_SERVER['REQUEST_URI'])) {
 
-    // Notice that this directory must be writable.
-    $firewallstorage = __DIR__ . '/../storage/shieldon';
+	// This directory must be writable.
+    $storage = __DIR__ . '/../storage/shieldon';
 
-    $firewall = new \Shieldon\Firewall($firewallstorage);
-    $firewall->restful();
-    $firewall->run();
+    $firewall = new \Shieldon\Firewall\Firewall();
+    $firewall->configure($storage);
+    $response = $firewall->run();
+
+    if ($response->getStatusCode() !== 200) {
+        $httpResolver = new \Shieldon\Firewall\HttpResolver();
+        $httpResolver($response);
+    }
+}
 }
 ```
 
@@ -62,10 +67,9 @@ php bin/console make:controller FirewallPanelController
 Add several lines in the `FirewallPanelController` controller class:
 
 ```php
-$firewall = \Shieldon\Container::get('firewall');
-$controlPanel = new \Shieldon\FirewallPanel($firewall);
-$controlPanel->entry();
-exit;
+$panel = new \Shieldon\Firewall\Panel();
+// The entry point must be the same as the route defined.
+$panel->entry('/firewall/panel');
 ```
 
 If you have CSRF enabled, add these lines:
@@ -92,15 +96,15 @@ class FirewallPanelController extends AbstractController
      */
     public function index()
     {
-        $firewall = \Shieldon\Container::get('firewall');
-        $controlPanel = new \Shieldon\FirewallPanel($firewall);
-
         // If you have `symfony/security-csrf` installed.
         $csrf = $this->container->get('security.csrf.token_manager');
         $token = $csrf->refreshToken('key');
 
-        $controlPanel->csrf('_token', $token);
-        $controlPanel->entry();
+        $panel = new \Shieldon\Firewall\Panel();
+        // The entry point must be the same as the route defined.
+
+        $panel->csrf(['_token' => $token]);
+        $panel->entry('/firewall/panel');
         exit;
     }
 }
@@ -111,9 +115,13 @@ That's it.
 You can access the Firewall Panel by `/firewall/panel`, to see the page, go to this URL in your browser.
 
 ```bash
-https://for.example.com/firewall/panel
+https://yourwebsite.com/firewall/panel
 ```
 
 The default login is `shieldon_user` and `password` is `shieldon_pass`. After logging in the Firewall Panel, the first thing you need to do is to change the login and password.
 
 Shieldon Firewall will start watching your website if it get enabled in `Deamon` setting section, make sure you have set up the settings correctly.
+
+### Middleware
+
+You can also use Shieldon as a PSR-7 middleware, please take a look at [Slim 4 example](/en/v2/guide/slim.html).

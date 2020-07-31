@@ -9,12 +9,7 @@ PHPixie is a mirco framework. It's version 3 documentation is vague - missing lo
 Use PHP Composer:
 
 ```php
-composer require shieldon/shieldon
-```
-
-Or, download it and include the Shieldon autoloader.
-```php
-require 'Shieldon/autoload.php';
+composer require shieldon/shieldon ^2
 ```
 
 ## Implementing
@@ -31,11 +26,28 @@ require_once(__DIR__.'/../vendor/autoload.php');
 Add the following code:
 
 ```php
-// Implement Shieldon Firewall.
-new \Shieldon\Integration\Bootstrapper(
-    $storage = '',
-    $fpRequestURI = '/firewall/panel'
-);
+// Prevent error when running in CLI environment.
+if (isset($_SERVER['REQUEST_URI'])) {
+
+    // This directory must be writable.
+    $storage = dirname($_SERVER['SCRIPT_FILENAME']) . '/../shieldon_firewall';
+    $panelUrl = '/firewall/panel/';
+
+    $firewall = new \Shieldon\Firewall\Firewall();
+    $firewall->configure($storage);
+
+    if (strpos($_SERVER['REQUEST_URI'], $panelUrl) === '0') {
+        $panel = new \Shieldon\Firewall\Panel();
+        $panel->entry($panelUrl);
+    }
+
+    $response = $firewall->run();
+
+    if ($response->getStatusCode() !== 200) {
+        $httpResolver = new \Shieldon\Firewall\HttpResolver();
+        $httpResolver($response);
+    }
+}
 ```
 
 The first parameter is the directory where the Shieldon Firewall will generate its data and logs in. The second parameter is a URL that can allow you to access the firewall panel.
@@ -48,10 +60,29 @@ So, your `index.php` will look like this:
 require_once(__DIR__.'/../vendor/autoload.php');
 
 // Implement Shieldon Firewall.
-new \Shieldon\Integration\Bootstrapper(
-    $storage = '',
-    $fpRequestURI = '/firewall/panel'
-);
+if (isset($_SERVER['REQUEST_URI'])) {
+
+    // This directory must be writable.
+    $storage = dirname($_SERVER['SCRIPT_FILENAME']) . '/../shieldon_firewall';
+
+    // The URI path of the firewall control panel.
+    $panelUri = '/firewall/panel/';
+
+    $firewall = new \Shieldon\Firewall\Firewall();
+    $firewall->configure($storage);
+
+    if (strpos($_SERVER['REQUEST_URI'], $panelUri) === '0') {
+        $panel = new \Shieldon\Firewall\Panel();
+        $panel->entry($panelUrl);
+    }
+
+    $response = $firewall->run();
+
+    if ($response->getStatusCode() !== 200) {
+        $httpResolver = new \Shieldon\Firewall\HttpResolver();
+        $httpResolver($response);
+    }
+}
 
 $framework = new Project\Framework();
 $framework->registerDebugHandlers();
@@ -60,10 +91,10 @@ $framework->processHttpSapiRequest();
 
 That's it.
 
-You can access the Firewall Panel by `/firewall/panel`, to see the page, go to this URL in your browser.
+You can access the Firewall Panel by `/firewall/panel/`, to see the page, go to this URL in your browser.
 
 ```bash
-https://for.example.com/firewall/panel
+https://yourwebsite.com/firewall/panel/
 ```
 
 The default login is `shieldon_user` and `password` is `shieldon_pass`. After logging in the Firewall Panel, the first thing you need to do is to change the login and password.
