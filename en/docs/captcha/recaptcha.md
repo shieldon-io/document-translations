@@ -2,8 +2,8 @@
 
 ## `Shieldon\Captcha\Recaptcha`
 
-- *param* array `$config`
-- *return* void
+- **param** `array` $config `-` The settings.
+- **return** `void`
 
 ### V2
 
