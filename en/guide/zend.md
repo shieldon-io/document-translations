@@ -27,79 +27,30 @@ This will also install dependencies built for Shieldon:
 
 This is an example that shows you using a PSR-15 Middleware in Zend Expressive skeleton.
 
-#### 1. Define a Middleware.
+#### 1. Register a middleware.
 
-```php
-class FirewallMiddleware
-{
-    /**
-     * The absolute path of the storage where stores Shieldon generated data.
-     *
-     * @var string
-     */
-    protected $storage = '';
-
-    /**
-     * Constructor.
-     *
-     * @param string $storage See property `storage` explanation.
-     */
-    public function __construct($storage = '')
-    {
-        // shieldon folder is placed above wwwroot for best security, this folder must be writable.
-        $this->storage = dirname($_SERVER['SCRIPT_FILENAME']) . '/../data';
-
-        if ('' !== $storage) {
-            $this->storage = $storage;
-        }
-    }
-
-    /**
-     * Shieldon middleware invokable class.
-     *
-     * @param ServerRequest  $request PSR-7 request
-     * @param RequestHandler $delegat PSR-15 request handler
-     *
-     * @return Response
-     */
-    public function process(Request $request, RequestHandler $handler): Response
-    {
-        $firewall = new \Shieldon\Firewall\Firewall($request, $response);
-        $firewall->configure($this->storage);
-
-        $firewall->getShieldon()->setCaptcha(
-            new \Shieldon\Captcha\Csrf([
-                'name' => '_shieldon_csrf',
-                'value' => $request->getAttribute('_shieldon_csrf'),
-            ])
-        );
-
-        $response = $firewall->run();
-
-        if ($response->getStatusCode() !== 200) {
-            $httpResolver = new \Shieldon\Firewall\HttpResolver();
-            $httpResolver($response);
-        }
-
-        return $handler->handle($request);
-    }
-}
-```
+There is a [integration class](https://github.com/terrylinooo/shieldon/blob/2.x/src/Firewall/Integration/ZendPsr15.php) ready for Zend Expressive.
 
 In your `pipeline.php`, add this line:
 
+Example:
+
 ```php
-$app->pipe(\FirewallMiddleware:class);
+$app->pipe(\Shieldon\Firewall\Integration\ZendPsr15:class);
 ```
 
-#### 2.  Defind a Handler.
+#### 2.  Define a handler.
 
 Let's go to `App/src/Handler` directory and create a PHP file named `FirewallPanelHandler`.
 
 Copy the text blew, paste them into that file.
 
+Example:
+
 ```php
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Handler;
 
@@ -124,17 +75,29 @@ class FirewallPanelHandler implements RequestHandlerInterface
 }
 ```
 
-#### 3.  Defind a Route for Firewall Panel.
+#### 3.  Define a route for firewall panel.
 
 In your `route.php`, add this line:
 
+Example:
 ```php
-$app->route('/firewall/panel/', App\Handler\FirewallPanelHandler::class, ['GET', 'POST'], 'panel');
+
+// Begin - Shieldon Firewall
+
+$app->route('/firewall/panel/', App\Handler\FirewallPanelHandler::class, ['GET', 'POST']);
+
+foreach(\Shieldon\Firewall\Panel::getRoutes() as $route) {
+    $app->route("/firewall/panel/$route/", App\Handler\FirewallPanelHandler::class, ['GET', 'POST']);
+}
+
+// End - Shieldon Firewall
 ```
+
+That's it.
 
 ### Zend MVC
 
-Because that I am not sure how old version of Zend framework you are using. Therefore I decide to get rid of Middleware to make sure this guide will work with the most versions of Zend.
+I am not sure how old version of Zend framework you are using, therefore I decide to get rid of middleware to make sure this guide will work with the most versions of Zend.
 
 #### 1. Before initializing Core
 
@@ -155,14 +118,14 @@ Add the following code:
 | Shieldon Firewall will watch all HTTP requests coming to your website.
 |
 */
-
 if (isset($_SERVER['REQUEST_URI'])) {
-	// This directory must be writable.
-    $storage = __DIR__ . '/../data/shieldon';
+
+    // This directory must be writable.
+    $storage = dirname($_SERVER['SCRIPT_FILENAME']) . '/../shieldon_firewall';
 
     $firewall = new \Shieldon\Firewall\Firewall();
     $firewall->configure($storage);
-    $firewall->controlPanel('/firewall/panel/');
+    $firewall->controlPanel('/firewall/panel');
     $response = $firewall->run();
 
     if ($response->getStatusCode() !== 200) {
@@ -175,9 +138,9 @@ if (isset($_SERVER['REQUEST_URI'])) {
 The next step is to create a controller for control panel.
 
 
-#### 2.  Defind a Controller.
+#### 2.  Define a controller.
 
-Let's create a controller and named it with `FirewallPanelController`. Ths is the entry point of our Shieldon Firewall's controll panel.
+Let's create a controller and named it with `FirewallController`.
 
 ```php
 <?php
@@ -199,14 +162,26 @@ class FirewallController extends AbstractActionController
 }
 ```
 
-#### 3.  Defind a Route for Firewall Panel.
+#### 3.  Define a route for firewall panel.
 
-In your `module.config.php`, add the code as below.
+Open the `module.config.php`, the location is at:
+
+```bash
+module/Application/config/module.config.php
+```
+
+**(3-1)** Inside the array `['router']['routes']` add the code as below.
+
+Example:
+
 ```php
 'firewallpanel' => [
-    'type' => Literal::class,
+    'type' => Segment::class,
     'options' => [
-        'route'    => '/firewall/panel/',
+        'route'    => '/firewall/panel[:slug]',
+        'constraints' => [
+            'slug' => '[a-zA-Z0-9\/]*',
+        ],
         'defaults' => [
             'controller' => Controller\FirewallController::class,
             'action'     => 'panel',
@@ -215,7 +190,16 @@ In your `module.config.php`, add the code as below.
 ],
 ```
 
+**(3-2)** Inside the array `['controllers']['factories']` add the code as below.
+
+```php
+Controller\FirewallController::class => InvokableFactory::class,
+```
+
 That's it.
+
+
+## Control Panel
 
 You can access the Firewall Panel by `/firewall/panel/`, to see the page, go to this URL in your browser.
 

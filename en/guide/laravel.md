@@ -158,7 +158,7 @@ If you use *intergation class*, the code will look like this:
 'firewall' => \Shieldon\Firewall\Integration\Laravel::class,
 ```
 
-#### 3.  Defind a Route for Firewall Panel.
+#### 3.  Define a Route for Firewall Panel.
 
 We need a controller to get into the controll panel of Shieldon firewall.
 

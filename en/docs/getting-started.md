@@ -215,9 +215,9 @@ class MY_Controller extends CI_Controller
 }
 ```
 
-#### 3.  Defind a controller for controll panel.
+#### 3.  Define a controller for controll panel.
 
-We need a controller to get into Shieldon firewall controll panel, in this example, we defind a controller named `Firewall`.
+We need a controller to get into Shieldon firewall controll panel, in this example, wedefine a controller named `Firewall`.
 
 ```php
 class Firewall extends MY_Controller

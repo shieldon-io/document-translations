@@ -42,7 +42,7 @@ In your `pipeline.php`, add this line:
 $app->pipe(\Shieldon\Integration\Zend\Psr15Middleware::class);
 ```
 
-#### 2.  Defind a Handler.
+#### 2.  Define a Handler.
 
 Let's go to `App/src/Handler` directory and create a PHP file named `FirewallPanelHandler`.
 
@@ -75,7 +75,7 @@ class FirewallPanelHandler implements RequestHandlerInterface
 }
 ```
 
-#### 3.  Defind a Route for Firewall Panel.
+#### 3.  Define a Route for Firewall Panel.
 
 In your `route.php`, add this line:
 
@@ -120,7 +120,7 @@ if (isset($_SERVER['REQUEST_URI'])) {
 The next step is to create a controller for control panel.
 
 
-#### 2.  Defind a Controller.
+#### 2.  Define a Controller.
 
 Let's create a controller and named it with `FirewallPanelController`. Ths is the entry point of our Shieldon Firewall's controll panel.
 
@@ -151,7 +151,7 @@ class FirewallPanelController extends AbstractActionController
 }
 ```
 
-#### 3.  Defind a Route for Firewall Panel.
+#### 3.  Define a Route for Firewall Panel.
 
 In your `module.config.php`, add the code as below.
 ```php

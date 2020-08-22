@@ -56,7 +56,7 @@ Modify `app/Http/Kernel.php` and add this line in `$routeMiddleware` property.
 'firewall' => \App\Http\Middleware\ShieldonFirewall::class,
 ```
 
-#### 3.  Defind a Route for Firewall Panel.
+#### 3.  Define a Route for Firewall Panel.
 
 We need a controller to get into Shieldon firewall controll panel, so that..
 

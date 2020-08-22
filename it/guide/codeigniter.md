@@ -87,9 +87,9 @@ If your application folder is in the same level with index.php, please move the 
 $storage =  APPPATH . '../shieldon';
 ```
 
-#### 3.  Defind a Controller for Firewall Panel.
+#### 3.  Define a Controller for Firewall Panel.
 
-We need a controller to get into Shieldon firewall controll panel, in this example, we defind a controller named `Example`.
+We need a controller to get into Shieldon firewall controll panel, in this example, wedefine a controller named `Example`.
 
 ```php
 class Example extends MY_Controller
@@ -147,7 +147,7 @@ public $globals = [
 ];
 ```
 
-### 2.  Defind a Controller for Firewall Panel.
+### 2.  Define a Controller for Firewall Panel.
 
 ```php
 <?php 
