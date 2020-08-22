@@ -117,8 +117,7 @@ class FirewallPanelHandler implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $panel = new \Shieldon\Firewall\Panel();
-        // The base url for the control panel.
-        $panel->entry('/firewall/panel');
+        $panel->entry();
 
         return new Response();
     }
@@ -130,7 +129,7 @@ class FirewallPanelHandler implements RequestHandlerInterface
 In your `route.php`, add this line:
 
 ```php
-$app->route('/firewall/panel', App\Handler\FirewallPanelHandler::class, ['GET', 'POST'], 'panel');
+$app->route('/firewall/panel/', App\Handler\FirewallPanelHandler::class, ['GET', 'POST'], 'panel');
 ```
 
 ### Zend MVC
@@ -163,6 +162,7 @@ if (isset($_SERVER['REQUEST_URI'])) {
 
     $firewall = new \Shieldon\Firewall\Firewall();
     $firewall->configure($storage);
+    $firewall->controlPanel('/firewall/panel/');
     $response = $firewall->run();
 
     if ($response->getStatusCode() !== 200) {
@@ -186,19 +186,15 @@ namespace Application\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 
-class FirewallPanelController extends AbstractActionController
+class FirewallController extends AbstractActionController
 {
     /**
      * The entry point of the Firewall Panel.
-     *
-     * @return string
      */
-    public function indexAction()
+    public function panelAction()
     {
         $panel = new \Shieldon\Firewall\Panel();
-        // The entry point must be the same as the route defined.
-        $panel->entry('/firewall/panel');
-        exit;
+        $panel->entry();
     }
 }
 ```
@@ -210,10 +206,10 @@ In your `module.config.php`, add the code as below.
 'firewallpanel' => [
     'type' => Literal::class,
     'options' => [
-        'route'    => '/firewall/panel',
+        'route'    => '/firewall/panel/',
         'defaults' => [
-            'controller' => Controller\FirewallPanelController::class,
-            'action'     => 'index',
+            'controller' => Controller\FirewallController::class,
+            'action'     => 'panel',
         ],
     ],
 ],
@@ -221,7 +217,7 @@ In your `module.config.php`, add the code as below.
 
 That's it.
 
-You can access the Firewall Panel by `/firewall/panel`, to see the page, go to this URL in your browser.
+You can access the Firewall Panel by `/firewall/panel/`, to see the page, go to this URL in your browser.
 
 ```bash
 https://yourwebsite.com/firewall/panel
