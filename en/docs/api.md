@@ -2,6 +2,23 @@
 
 ## Kernel
 
+```
+Shieldon\Firewall\Kernel
+```
+
+- ban
+- getCurrentUrl
+- managedBy
+- run
+- setClosure
+- exclude
+- setExcludedUrls
+- setLogger
+- setProperty
+- setProperties
+- setStrict
+- unban
+
 ### ban(`$ip`)
 
 - **param** `string` $ip `-` Single IP address.
@@ -177,7 +194,15 @@ $kernel->unban('33.33.33.33');
 
 ---
 
-## Captcha
+## Captcha Trait
+
+```
+Shieldon\Firewall\Kernel\CaptchaTrait
+```
+
+- setCaptcha
+- captchaResponse
+- disableCaptcha
 
 ### setCaptcha(`$instance`)
 
@@ -218,7 +243,15 @@ Disable all Captcha modules. This method is for unit testing purpose.
 
 ---
 
-## Component
+## Component Trait
+
+```
+Shieldon\Firewall\Kernel\ComponentTrait
+```
+
+- setComponent
+- getComponent
+- disableComponents
 
 ### setComponent(`$instance`)
 
@@ -261,7 +294,15 @@ $kernel->disableComponents();
 
 ---
 
-## Driver
+## Driver Trait
+
+```
+Shieldon\Firewall\Kernel\DriverTrait
+```
+
+- setDriver
+- setChannel
+- disableDbBuilder
 
 ### setDriver(`$driver`)
 
@@ -285,6 +326,7 @@ $kernel->setDriver(
 - **return** `void`
 
 Example:
+
 ```php
 $kernel->setChannel('web_project');
 ```
@@ -301,12 +343,15 @@ Example:
 $kernel->disableDbBuilder();
 ```
 
-## Filter
+## Filter Trait
 
-     *   setFilters           | Set the filters.
-     *   setFilter            | Set a filter.
-     *   disableFilters       | Disable all filters.
+```
+Shieldon\Firewall\Kernel\FilterTrait
+```
 
+- setFilters
+- setFilter
+- disableFilters
 
 ### setFilters(`$settings`)
 
@@ -362,7 +407,16 @@ $kernel->disableFilters();
 
 ---
 
-## IP
+## IP Trait
+
+```
+Shieldon\Firewall\IpTrait
+```
+
+- setIp
+- getIp
+- setRdns
+- getRdns
 
 ### setIp(`$ip`)
 
@@ -420,7 +474,13 @@ $rdns = $kernel->getRdns();
 
 ---
 
-## Messenger
+## Messenger Trait
+
+```
+Shieldon\Firewall\Kernel\MessengerTrait
+```
+
+- setMessenger
 
 ### setMessenger(`$instance`)
 
@@ -440,12 +500,16 @@ $kernel->setMessenger($telegramMessenger);
 
 ---
 
-## Template
+## Template Trait
 
-     *   respond              | Respond the result.
-     *   setTemplateDirectory | Set the frontend template directory.
-     *   getJavascript        | Print a JavaScript snippet in the pages.
+```
+Shieldon\Firewall\Kernel\TemplateTrait
+```
 
+- setDialog
+- respond
+- setTemplateDirectory
+- getJavascript
 
 ### setDialog(`$settings`)
 
@@ -509,7 +573,14 @@ $jsCode = $kernel->getJavascript();
 
 ## Session
 
-### limitSession(int $count = 1000, int $period = 300, bool $unique = false)
+```
+Shieldon\Firewall\Kernel\SessionTrait
+```
+
+- limitSession
+- getSessionCount
+
+### limitSession(`$count`, `$period`, `$unique`)
 
 - **param** `int` $count `1000` The amount of online users. If reached, users will be in queue.
 - **param** `int` $period `300` The period of time allows users browsing.  (unit: second)

@@ -1,6 +1,6 @@
 # PHPixie
 
-PHPixie is a mirco framework. It's version 3 documentation is vague - missing lots of important article such as route setting - and I have no time to watch their video (reading documents is 100x faster than waching a video, agree?), hence this guide is just an idea about how to implement Shieldon Firewall on your PHPixie application.
+PHPixie is a mirco framework. Its version 3 documentation is vague - missing lots of important article such as route setting - and I have no time to watch their video, hence this guide is just an idea about how to implement Shieldon Firewall by using the simplest way.
 
 ![Firewall in PHPixie Framework](https://shieldon.io/images/home/phpixie-framework-firewall.png)
 
@@ -11,6 +11,13 @@ Use PHP Composer:
 ```php
 composer require shieldon/shieldon ^2
 ```
+
+This will also install dependencies built for Shieldon:
+
+- [shieldon/psr-http](https://github.com/terrylinooo/psr-http) The PSR-7, 15, 17 Implementation with full documented and well tested.
+- [shieldon/event-dispatcher](https://github.com/terrylinooo/event-dispatcher) The simplest event dispatcher.
+- [shieldon/web-security](https://github.com/terrylinooo/web-security) The collection of functions about web security.
+- [shieldon/messenger](https://github.com/terrylinooo/messenger) The collection of modules of sending message to third-party API or service, such as Telegram, Line, RocketChat, Slack, SendGrid, MailGun and more...
 
 ## Implementing
 
@@ -25,64 +32,24 @@ require_once(__DIR__.'/../vendor/autoload.php');
 ```
 Add the following code:
 
+Example:
 ```php
-// Prevent error when running in CLI environment.
-if (isset($_SERVER['REQUEST_URI'])) {
-
-    // This directory must be writable.
-    $storage = dirname($_SERVER['SCRIPT_FILENAME']) . '/../shieldon_firewall';
-    $panelUrl = '/firewall/panel/';
-
-    $firewall = new \Shieldon\Firewall\Firewall();
-    $firewall->configure($storage);
-
-    if (strpos($_SERVER['REQUEST_URI'], $panelUrl) === '0') {
-        $panel = new \Shieldon\Firewall\Panel();
-        $panel->entry($panelUrl);
-    }
-
-    $response = $firewall->run();
-
-    if ($response->getStatusCode() !== 200) {
-        $httpResolver = new \Shieldon\Firewall\HttpResolver();
-        $httpResolver($response);
-    }
-}
+// Implement Shieldon Firewall.
+$shieldon = new \Shieldon\Firewall\Integration\Bootstrap();
+$shieldon->run();
 ```
-
-The first parameter is the directory where the Shieldon Firewall will generate its data and logs in. The second parameter is a URL that can allow you to access the firewall panel.
 
 So, your `index.php` will look like this:
 
+Example:
 ```php
 <?php
 
 require_once(__DIR__.'/../vendor/autoload.php');
 
 // Implement Shieldon Firewall.
-if (isset($_SERVER['REQUEST_URI'])) {
-
-    // This directory must be writable.
-    $storage = dirname($_SERVER['SCRIPT_FILENAME']) . '/../shieldon_firewall';
-
-    // The URI path of the firewall control panel.
-    $panelUri = '/firewall/panel/';
-
-    $firewall = new \Shieldon\Firewall\Firewall();
-    $firewall->configure($storage);
-
-    if (strpos($_SERVER['REQUEST_URI'], $panelUri) === '0') {
-        $panel = new \Shieldon\Firewall\Panel();
-        $panel->entry($panelUrl);
-    }
-
-    $response = $firewall->run();
-
-    if ($response->getStatusCode() !== 200) {
-        $httpResolver = new \Shieldon\Firewall\HttpResolver();
-        $httpResolver($response);
-    }
-}
+$shieldon = new \Shieldon\Firewall\Integration\Bootstrap();
+$shieldon->run();
 
 $framework = new Project\Framework();
 $framework->registerDebugHandlers();

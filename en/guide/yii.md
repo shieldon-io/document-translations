@@ -1,9 +1,8 @@
-# Yii
+# Yii 2
 
 In this guide, I will give you some idea about how to implement Shieldon Firewall on your Yii application.
 
 ![Firewall in Yii Framework](https://shieldon.io/images/home/yii-framework-firewall.png)
-
 
 ## Installation
 
@@ -12,6 +11,13 @@ Use PHP Composer:
 ```php
 composer require shieldon/shieldon ^2
 ```
+
+This will also install dependencies built for Shieldon:
+
+- [shieldon/psr-http](https://github.com/terrylinooo/psr-http) The PSR-7, 15, 17 Implementation with full documented and well tested.
+- [shieldon/event-dispatcher](https://github.com/terrylinooo/event-dispatcher) The simplest event dispatcher.
+- [shieldon/web-security](https://github.com/terrylinooo/web-security) The collection of functions about web security.
+- [shieldon/messenger](https://github.com/terrylinooo/messenger) The collection of modules of sending message to third-party API or service, such as Telegram, Line, RocketChat, Slack, SendGrid, MailGun and more...
 
 ## Implementing
 
@@ -26,6 +32,8 @@ require __DIR__ . '/../vendor/yiisoft/yii2/Yii.php';
 ```
 
 Add the following code:
+
+Example:
 
 ```php
 /*
@@ -43,6 +51,10 @@ if (isset($_SERVER['REQUEST_URI'])) {
 
     $firewall = new \Shieldon\Firewall\Firewall();
     $firewall->configure($storage);
+
+    // The base url for the control panel.
+    $firewall->controlPanel('/firewall/panel/');
+
     $response = $firewall->run();
 
     if ($response->getStatusCode() !== 200) {
@@ -58,6 +70,8 @@ Create a controller named `FirewallPanelController`.
 
 The content would be the code below:
 
+Example:
+
 ```php
 <?php
 
@@ -65,7 +79,7 @@ namespace app\controllers;
 
 use yii\web\Controller;
 
-class FirewallPanelController extends Controller
+class FirewallController extends Controller
 {
     public function beforeAction($action)
     {
@@ -79,13 +93,10 @@ class FirewallPanelController extends Controller
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionPanel()
     {
         $panel = new \Shieldon\Firewall\Panel();
-
-        // The entry point of the firewall control panel.
-        // It must be the same as the route defined.
-        $panel->entry('/firewall-panel');
+        $panel->entry();
     }
 }
 
@@ -93,11 +104,15 @@ class FirewallPanelController extends Controller
 
 Make sure that `enablePrettyUrl` is true in your `config/web.php`
 
+Example:
+
 ```php
 'urlManager' => [
     'enablePrettyUrl' => true,
     'showScriptName' => false,
     'rules' => [
+        'firewall/panel/' => 'firewall/panel',
+        'firewall/panel/<slug:.*>' => 'firewall/panel',
     ],
 ],
 ```
@@ -105,6 +120,8 @@ Make sure that `enablePrettyUrl` is true in your `config/web.php`
 That's it.
 
 You can access the Firewall Panel by `/firewall-panel`, to see the page, go to this URL in your browser.
+
+## Controll Panel
 
 ```bash
 https://yourwebsite.com/firewall-panel

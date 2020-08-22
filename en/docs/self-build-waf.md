@@ -83,8 +83,14 @@ if ($result !== $kernel::RESPONSE_ALLOW) {
         $kernel->unban();
     }
 
-    $kernel->respond();
+    $response = $kernel->respond();
+
+    if ($response->getStatusCode() !== 200) {
+        $httpResolver = new \Shieldon\Firewall\HttpResolver();
+        $httpResolver($response);
+    }
 }
+
 ```
 
 That's it.
