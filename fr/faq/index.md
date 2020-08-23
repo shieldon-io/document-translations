@@ -1,6 +1,6 @@
 # FAQ
 
-If you have any question please post it on [stackoverflow](https://stackoverflow.com/), if you have found any bug, please post it to [issue forum](https://github.com/terrylinooo/shieldon/issues) of Shieldon's repository.
+If you have found any bug, please post it to [issue report](https://github.com/terrylinooo/shieldon/issues).
 
 
 - [Can I limit session number for only a specific page?](#faq-1)
@@ -20,7 +20,7 @@ After turning `Online Session Limit` off, you can use Shieldon's public API, for
 
 ```php
 if (strpos($_SERVER['REQUEST_URI'], 'faq/online-session-limit.html') !== false) {
-    $firewall->getShieldon()->limitSession(5, 300);
+    $firewall->getKernel()->limitSession(5, 300);
 }
 ```
 
@@ -41,7 +41,7 @@ If you want to block all IP addresses for a specific URL , the following code wi
 ```php
 // Put this code before $firewall->run();
 if (strpos($_SERVER['REQUEST_URI'], 'example/block-all.html') !== false) {
-    $firewall->getShieldon()->getComponent('Ip')->denyAll();
+    $firewall->getKernel()->getComponent('Ip')->denyAll();
 }
 ```
 

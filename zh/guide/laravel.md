@@ -1,138 +1,201 @@
 # Laravel
 
-這個指南幫助您解決部署 Shieldon 防火牆在您的 Laravel 應用程式的疑問。這些指引並非唯一可以達成的方法，只是給您一些點子。
+This guide helps you get through the confusion of implementing Shieldon Firewall on your Laravel application. These tips are not the only way to make it, but also gives you some ideas.
 
-以下的步驟已經在 Laravel 5 及 6 中測試過。
+The following steps have been tested on Laravel 5 and 6.
 
-![Laravel 框架防火牆](https://shieldon.io/images/home/laravel-framework-firewall.png)
+![Firewall in Laravel Framework](https://shieldon.io/images/home/laravel-framework-firewall.png)
 
-## 安裝
+## Installation
 
-使用 PHP Composer:
+Use PHP Composer:
 
 ```php
 composer require shieldon/shieldon
 ```
 
-或者下載後引入 Shieldon 自動載入器。
+This will also install dependencies built for Shieldon:
 
-```php
-require 'Shieldon/autoload.php';
-```
+- [shieldon/psr-http](https://github.com/terrylinooo/psr-http) The PSR-7, 15, 17 Implementation with full documented and well tested.
+- [shieldon/event-dispatcher](https://github.com/terrylinooo/event-dispatcher) The simplest event dispatcher.
+- [shieldon/web-security](https://github.com/terrylinooo/web-security) The collection of functions about web security.
+- [shieldon/messenger](https://github.com/terrylinooo/messenger) The collection of modules of sending message to third-party API or service, such as Telegram, Line, RocketChat, Slack, SendGrid, MailGun and more...
 
-部署 Shieldon 防火牆在您的網站應用程式上是相當簡單的藉著使用 Shieldon 面板，部署 Shieldon 防火牆在您的網站應用程式上是相當簡單的。我強烈建議您選用這個方法。
 
-## 部署
 
-對於 Laravel 愛好者，您可以選擇 **中介程式** 或 **引導程式** 來部署 Shieldon 防火牆在您的網站應用程式上。我個人偏好引導程式。
+## Implementing
 
-### 中介程式
+You can use Shieldon as a **middleware** or implement Shieldon on the  **bootstrap stage** of your web application.
 
-#### 1. 定義一個中介程式。
+### Bootstrap Stage
 
-定義一個中介程式名為 `ShieldonFirewall`
+Initialize Shieldon in the bootstrap stage of your application, mostly in just right after Composer autoloader has been included. I personally prefer this way because that there are fewer steps and to avoid possible conflicts with Laravel's built-in functions.
 
-```bash
-php artisan make:middleware ShieldonFirewall
-```
-在 `ShieldonFirewall` 中介程式的類別中加入以下程式碼:
+#### (1) Before Initializing the $app
 
-```php
-$firewall = new \Shieldon\Firewall(storage_path('shieldon'));
-
-// 轉傳 Laravel CSRF Token 到驗證碼表單。
-$firewall->getShieldon()->setCaptcha(new \Shieldon\Captcha\Csrf([
-    'name' => '_token',
-    'value' => csrf_token(),
-]));
-
-$firewall->restful();
-$firewall->run();
-```
-
-#### 2. 註冊一個中介程式別名。
-
-修改 `app/Http/Kernel.php` 然後加入這一樣到 `$routeMiddleware` 屬性中。
-```php
-'firewall' => \App\Http\Middleware\ShieldonFirewall::class,
-```
-
-#### 3. 為防火牆面板定義路由。
-
-我們需要一個控制器以進入 Shieldon 防火牆控制面板，所以呢...
-
-```php
-Route::any('/your/secret/place/', function() {
-    $firewall = \Shieldon\Container::get('firewall');
-    $controlPanel = new \Shieldon\FirewallPanel($firewall);
-    $controlPanel->csrf('_token', csrf_token());
-    $controlPanel->entry();
-})->middleware('firewall');
-```
-
-Shieldon 將會開始監看您的網站，如果在設定區塊中的 `守護進程` 有啟用的話。
-
-#### 4. 指派 `firewall` 中介程式到路由。
-
-指派 `firewall` 中介程式到任何您想要保護的路由。例如：
-
-```php
-Route::get('/', function () {
-    return view('welcome');
-})->middleware('firewall');
-```
-
-### 引導程式
-
-這就是我所說，我偏好的方法，因為比較少的步驟，且會避免可能發生和 Laravel 內建功能的衝突。
-
-#### 1. 在初始化 $app 之前。
-
-在您的 `bootstrap/app.php` 中，在`<?php`, 之後加入以下程式碼。
+In your `bootstrap/app.php`, after `<?php`, add the following code.
 
 ```php
 /*
 |--------------------------------------------------------------------------
-| 運行 Shieldon 防火牆
+| Run The Shieldon Firewall
 |--------------------------------------------------------------------------
 |
-| Shieldon 防火牆將開始監看所有進入您網站的 HTTP 請求。
-| 在初始化 Laravel 之前運行 Shieldon 防火牆會避免和 Laravel 內建功能的衝突。
-| 
+| Shieldon Firewall will watch all HTTP requests coming to your website.
+| Running Shieldon Firewall before initializing Laravel will avoid possible
+| conflicts with Laravel's built-in functions.
 */
-
 if (isset($_SERVER['REQUEST_URI'])) {
 
-    // 注意這個目錄必須可寫入。
-    $firewallstorage = __DIR__ . '/../storage/shieldon';
+    // This directory must be writable.
+    // We put it in the `storage/shieldon_firewall` directory.
+    $storage =  __DIR__ . '/../storage/shieldon_firewall';
 
-    $firewall = new \Shieldon\Firewall($firewallstorage);
-    $firewall->restful();
-    $firewall->run();
+    $firewall = new \Shieldon\Firewall\Firewall();
+
+    $firewall->configure($storage);
+
+    // The base url for the control panel.
+    $firewall->controlPanel('/firewall/panel/');
+
+    $response = $firewall->run();
+
+    if ($response->getStatusCode() !== 200) {
+        $httpResolver = new \Shieldon\Firewall\HttpResolver();
+        $httpResolver($response);
+    }
 }
 ```
 
-#### 2. 為防火牆面板定義路由。
+#### (2) Define a route for firewall panel.
 
 ```php
-Route::any('/your/secret/place/', function() {
-    $firewall = \Shieldon\Container::get('firewall');
-    $controlPanel = new \Shieldon\FirewallPanel($firewall);
-    $controlPanel->csrf('_token', csrf_token());
-    $controlPanel->entry();
-});
+Route::any('/firewall/panel/{path?}', function() {
+
+    $panel = new \Shieldon\Firewall\Panel();
+    $panel->csrf(['_token' => csrf_token()]);
+    $panel->entry();
+
+})->where('path', '(.*)');
 ```
 
-如果您採用這個方式，Shieldon 防火牆將會在全域範圍運行，不過不用擔心，您可以針對想要 Shiedon 防火牆忽略的網址設定設定排除列表。
+If you adopt this way, Shieldon Firewall will run in Global scope. But no worry, you can set up the exclusion list for the URLs you want Shieldon Firewall ignore them.
 
-就是這樣囉。
+### Middleware
 
-現在，您可以連接上防火牆面板，透過網址：
+You can define a middleware by yourself or use [intergration class](https://github.com/terrylinooo/shieldon/blob/2.x/src/Firewall/Integration/Laravel.php).
 
+If you choose to use intergation class, skip step 1 and go to step 2-2.
+
+#### 1.  Define a Middleware.
+
+Define a middleware named `ShieldonFirewall`
+```bash
+php artisan make:middleware ShieldonFirewall
 ```
-https://for.example.com/your/secret/place/
+Add several lines in the `ShieldonFirewall` middleware class, the content will look like below.
+
+```php
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+
+class ShieldonFirewall
+{
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @return mixed
+     */
+    public function handle($request, Closure $next)
+    {
+        $firewall = new \Shieldon\Firewall\Firewall();
+
+        // The directory in where Shieldon Firewall will place its files.
+        $storage = storage_path('shieldon_firewall');;
+
+        $firewall->configure($storage);
+
+        // Base URL for control panel.
+        $firewall->controlPanel('/firewall/panel/');
+
+        $firewall->getKernel()->setCaptcha(
+            new Csrf([
+                'name' => '_token',
+                'value' => csrf_token(),
+            ])
+        );
+
+        $response = $firewall->run();
+
+        if ($response->getStatusCode() !== 200) {
+            $httpResolver = new \Shieldon\Firewall\HttpResolver();
+            $httpResolver($response);
+        }
+
+        return $next($request);
+    }
+}
 ```
 
-預設的登入帳號是 `shieldon_user` 而密碼是 `shieldon_pass`。在您登入防火牆面板之後，第一件該做的事情就是更改帳號及密碼。
+#### 2.  Register a Middleware alias.
 
-如果在設定區塊中的 `守護進程` 有啟用的話，Shieldon 將會開始監看您的網站，請確定您已經把設定值都設定正確。
+Modify `app/Http/Kernel.php` and add this line in `$routeMiddleware` property.
+
+2-1
+```php
+'firewall' => \App\Http\Middleware\ShieldonFirewall::class,
+```
+
+If you use *intergation class*, the code will look like this:
+
+2-2
+```php
+'firewall' => \Shieldon\Firewall\Integration\Laravel::class,
+```
+
+#### 3.  Define a Route for Firewall Panel.
+
+We need a controller to get into the controll panel of Shieldon firewall.
+
+```php
+Route::any('/firewall/panel/{path?}', function() {
+
+    $panel = new \Shieldon\Firewall\Panel();
+    $panel->csrf(['_token' => csrf_token()]);
+    $panel->entry();
+
+})->where('path', '(.*)');
+```
+
+Shieldon Firewall will start watching your website if it get enabled in `Deamon` setting section.
+
+#### 4.  Assign `firewall` middleware to a route.
+
+Assign `firewall` middleware to any route you would like to protect. For example:
+
+```php
+Route::any('/', function () {
+    return view('welcome');
+
+})->middleware('firewall');
+```
+
+That's it.
+
+
+## Control Panel
+
+You can access the control panel by entering `/firewall/panel/`.
+
+```bash
+https://for.example.com//firewall/panel/
+```
+
+The default login is `shieldon_user` and `password` is `shieldon_pass`. After logging in the Firewall Panel, the first thing you need to do is to change the login and password.
+
+Shieldon Firewall will start watching your website if it get enabled in `Deamon` setting section, make sure you have set up the settings correctly.

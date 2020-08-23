@@ -1,42 +1,47 @@
 # CodeIgniter
 
-CodeIgniter 是一套輕量的 MVC 框架。第 3 版和第 4 版在架構上有很大差異，所以先提 CodeIgniter 3。
+CodeIgniter is a light-weight MVC framework. I talk the CodeIgniter 3 first because that Its version 4 has extreme differences from the early versions.
 
-在這個指南中，我將和您分享提示關於部署 Sheildon 防火牆在您的 CodeIgniter 應用程式。
+In this guide, I will share with you the tips for implementing Shieldon Firewall on your CodeIgniter application.
 
-![CodeIgniter 框架防火牆](https://shieldon.io/images/home/codeigniter-framework-firewall.png)
+![Firewall in CodeIgniter Framework](https://shieldon.io/images/home/codeigniter-framework-firewall.png)
 
-## 安裝
 
-使用 PHP Composer:
+## Installation
 
-```php
-composer require shieldon/shieldon
-```
-
-或者下載後引入 Shieldon 自動載入器。
+Use PHP Composer:
 
 ```php
-require 'Shieldon/autoload.php';
+composer require shieldon/shieldon ^2
 ```
 
-## 部署
+This will also install dependencies built for Shieldon:
+
+- [shieldon/psr-http](https://github.com/terrylinooo/psr-http) The PSR-7, 15, 17 Implementation with full documented and well tested.
+- [shieldon/event-dispatcher](https://github.com/terrylinooo/event-dispatcher) The simplest event dispatcher.
+- [shieldon/web-security](https://github.com/terrylinooo/web-security) The collection of functions about web security.
+- [shieldon/messenger](https://github.com/terrylinooo/messenger) The collection of modules of sending message to third-party API or service, such as Telegram, Line, RocketChat, Slack, SendGrid, MailGun and more...
+
+## Implementing
+
+- CodeIgniter 3
+- CodeIgniter 4
 
 ### CodeIgniter 3
 
-CodeIgniter 3 使用一種超級單例實例稱為 `CI_Controller` 來處理它的 MVC (Model-View-Controller) 架構模式。
+CodeIgniter 3 has a core controller called `CI_Controller` that handles its MVC (Model-View-Controller) architectural pattern.
 
-我強烈建議您在 `core` 資料夾中建立一個 MY_Controller 做為母控制器然後放進初始化的程式碼。
+I highly recommend you to a parent controller calle `MY_Controller` in the `core` folder, and then put the initial code into it.
 
-#### 1. MY_Controller
+#### 1.  MY_Controller
 
-我們在 `core` 資料夾中建立一個 MY_Controller.php 。
+Let's create a MY_Controller.php in the `core` folder.
 
 ```php
-class Core_Controller extends CI_Controller
+class MY_Controller extends CI_Controller
 {
     /**
-     * 建構子。
+     * Constructor.
      */
     public function __construct()
     {
@@ -45,30 +50,42 @@ class Core_Controller extends CI_Controller
 }
 ```
 
-#### 2. 初始化防火牆實例
+#### 2.  Initialize Firewall instance
 
-放進初始化的程式碼到建構子中，則任何繼承 MY_Controller 的控制器將會有被初始化後的 Shieldon 防火牆以及 `$this->firewall()` 可使用。
+Put the initial code in the constructor so that any controller extends MY_Controller will have Shieldon Firewall initialized and `$this->firewall()` method ready.
 
 ```php
 class MY_Controller extends CI_Controller
 {
     /**
-     * 建構子。
+     * Constructor.
      */
     public function __construct()
     {
         parent::__construct();
 
-        // Composer 自動載入器。
+        // Composer autoloader
         require_once APPPATH . '../vendor/autoload.php';
 
-        // 此目錄必須可寫入。
-        $storage =  APPPATH . 'cache/shieldon';
-        $firewall = new \Shieldon\Firewall($storage);
+        // This directory must be writable.
+        $storage = APPPATH . 'cache/shieldon_firewall';
+
+        $firewall = new \Shieldon\Firewall\Firewall();
+        $firewall->configure($storage);
+
+        // The base url for the control panel.
+        $firewall->controlPanel('/firewall/panel/');
+
+        $response = $firewall->run();
+
+        if ($response->getStatusCode() !== 200) {
+            $httpResolver = new \Shieldon\Firewall\HttpResolver();
+            $httpResolver($response);
+        }
     }
 
     /**
-     * 使用此方法的網頁受到防火牆保護。
+     * Shieldon Firewall protection.
      */
     public function firewall()
     {
@@ -78,65 +95,56 @@ class MY_Controller extends CI_Controller
 }
 ```
 
-*提醒*
+*Reminder*
 
-為了安全性起見，system 和 application 資料夾都應該放在網站根目錄的上一層，則他們無法直接經由瀏覽器讀取。
+For the best security, both the system and application folders should be placed above web root so that they are not directly accessible via a browser.
 
-如果你的 application 目錄放在和 index.php 同一層，請將 `$storage` 移往安全的位置，例如：
+If your application folder is in the same level with index.php, please move the `$storage` to a safe place. For example:
 
 ```php
 $storage =  APPPATH . '../shieldon';
 ```
 
-#### 3. 為防火牆面板定義一個控制器
+#### 3.  Define a controller for control panel.
 
-我們需要一個控制器以進入 Shieldon 防火牆控制面板，在這個例子中，我們定義一個名為 `Example` 的控制器。
+We need a controller to get into Shieldon firewall controll panel, in this example, wedefine a controller named `Firewall`.
 
 ```php
-class Example extends MY_Controller
+class Firewall extends MY_Controller
 {
-    /**
-     * 建構子。
-     */
     public function __construct()
     {
         parent::__construct();
     }
 
     /**
-     * 這是我們的防火牆面板的入口。
+     * This is the entry of our Firewall Panel.
      */
-    public function ControllPanel()
+    public function panel()
     {
-        // 從 Shieldon 容器中取得防火牆的實例。
-        $firewall = \Shieldon\Container::get('firewall');
-
-        // 進入防火牆面板。
-        $controlPanel = new \Shieldon\FirewallPanel($firewall);
-        $controlPanel->entry();
+        $panel = new \Shieldon\Firewall\Panel();
+        $panel->entry();
     }
 }
 ```
 
-現在，您可以連接上防火牆面板，透過網址：
+Now, you can access the Firewall Panel via URL:
 
 ```plaintext
-http://yoursite.com/example/controllPanel/
+https://yoursite.com/firewall/panel/
 ```
-
-Shieldon 將會開始監看您的網站，如果在設定區塊中的 `守護進程` 有啟用的話。
 
 ### CodeIgniter 4
 
-### 1. 註冊一個過濾器。
+#### 1. Register a Filter.
 
-在您的 `app/Config/Filter.php` 檔案中，加入以下程式碼到 `$aliases` 屬性。
+In your `app/Config/Filter.php`, add the following code to the `$aliases` property.
 
 ```php
-'firewall' => \Shieldon\Integration\CodeIgniter\CI4Middleware::class,
+'firewall' => \Shieldon\Firewall\Intergration\CodeIgniter4::class,
 ```
 
-然後，加入字串 *firewall* 到 `$globals` 屬性的 `before` 陣列中。
+And then, add the string *firewall* to the `$globals` property, `before` array.
 
 
 ```php
@@ -147,36 +155,34 @@ public $globals = [
 ];
 ```
 
-### 2. 為防火牆面板定義一個控制器
+#### 2.  Define a Controller for Firewall Panel.
 
 ```php
 <?php 
 
 namespace App\Controllers;
 
-class FirewallPanel extends BaseController
+class Firewall extends BaseController
 {
-    public function index()
+    public function panel()
     {
-        // 從 Shieldon 容器中取得防火牆的實例。
-        $firewall = \Shieldon\Container::get('firewall');
-
-        // 進入防火牆面板。
-        $controlPanel = new \Shieldon\FirewallPanel($firewall);
-        $controlPanel->csrf(csrf_token(), csrf_hash());
-        $controlPanel->entry();
+        $panel = new \Shieldon\Firewall\Panel();
+        $panel->csrf([csrf_token() => csrf_hash()]);
+        $panel->entry();
     }
 }
 ```
 
-就是這樣囉。
+That's it.
 
-您可以由 `/firewallPanel` 連接防火牆面板，在瀏覽器上打上網址：
+You can access the Firewall Panel by `/firewall/panel`, to see the page, go to this URL in your browser.
 
+## Control Panel
+
+```plaintext
+https://yoursite.com/firewall/panel/
 ```
-https://for.example.com/firewallPanel
-```
 
-預設的登入帳號是 `shieldon_user` 而密碼是 `shieldon_pass`。在您登入防火牆面板之後，第一件該做的事情就是更改帳號及密碼。
+The default login is `shieldon_user` and `password` is `shieldon_pass`. After logging in the Firewall Panel, the first thing you need to do is to change the login and password.
 
-如果在設定區塊中的 `守護進程` 有啟用的話，Shieldon 將會開始監看您的網站，請確定您已經把設定值都設定正確。
+Shieldon Firewall will start watching your website if it get enabled in `Deamon` setting section, make sure you have set up the settings correctly.

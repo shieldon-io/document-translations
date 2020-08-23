@@ -1,98 +1,96 @@
-# 自建 WAF
+# Self-build WAF
 
-假如您想要建立自己的 WAF，藉由組裝 Shieldon 套件裡這些公開的 API，您就能夠建立一個類似 Shieldon 防火牆的 WAF。
+If you would like to build your own Web Application Firewall, WAF, by combining the public APIs of Shieldon library, you can create one resembling the Shieldon Firewall.
 
-這裡是一個例子讓您瞭解 Shieldon 的運作方式。接著您可以手動地部署 Shieldon 到您的網站應用程式上。
+Here is an example to let you know how Shieldon works and then you can manually implement Shieldon on your web application.
 
-## 生命週期表
+## Lifecycle Diagram
 
-以下是一個是示意圖，描述 Shieldon 實例的生命週期。您不用全盤瞭解目前運作的一切，但是當您想要自定義組件或 CAPTCHA 模組或更多時，它將是一個有用的參考。
+Below is a diagram for the Shieldon instance lifecycle. You don’t need to fully understand everything going on right now, but as you want to customize your own components or CAPTCHA modules or more, it will be a useful reference.
 
-![生命週期表](https://i.imgur.com/9RLHFG1.png)
+![Lifecycle Diagram](https://i.imgur.com/9RLHFG1.png)
 
-## 提示
+## Tips
 
-### 1. 初始化 Shieldon 實例
+### 1. Initialize Shieldon instance.
 
 ```php
-$shieldon = new \Shieldon\Shieldon();
+$kernel = new \Shieldon\Firewall\Kernel();
 ```
 
-### 2. 設定一個資料驅動器
+### 2. Set up a data driver.
 
-在這個例子。我用 SQLite 作為資料驅動器。
+In this example, I use SQLite as the data driver.
 
 ```php
 $dbLocation = APPPATH . 'cache/shieldon.sqlite3';
 $pdoInstance = new \PDO('sqlite:' . $dbLocation);
-$shieldon->setDriver(new \Shieldon\Driver\SqliteDriver($pdoInstance));
+
+$kernel->setDriver(
+    new \Shieldon\Firewall\Driver\SqliteDriver($pdoInstance)
+);
 ```
 
-### 3. 設定組件
+### 3. Set up the components.
 
-Shieldon 組件是規則集合，用來永久地許可或者拒絕工作階段。在這個例子中，我們載入 TrustedBot 組件來許可受歡迎的搜尋引擎，機器人不在規則集中的話，將會進入檢查的處理過程。（接下來的組件及過濾器）。
+Shieldon components are rule sets to allow or deny session permanently.
+
+In this example, we load the TrustedBot component to allow popular search engines to prevent them bots go into the checking process - next components and filters.
 
 ```php
-$shieldon->setComponent(new \Shieldon\Component\TrustedBot());
+$kernel->setComponent(
+    new \Shieldon\Firewall\Component\TrustedBot()
+);
 ```
 
-### 4. 設定頻道 *(非必要)*
+### 4. Set up a channel. *(not required)*
 
-您可以忽略掉這個設定，如果您只使用一個 Shieldon 在您的網站應用程式上。此設定是為了多實例用。
+You can ignore this setting if you only use one Shieldon kernel instance on your web application. The channel is just the prefix of the name of the data tables.
 
-```
-$shieldon->setChannel('web_project');
-```
-
-### 5. 限制線上工作階段的數字 *(非必要)*
-
-只許可 10 個工作階段瀏覽目前的網頁。預設的過期時間是 300 秒。
-
-```
-$shieldon->limitSession(10, 300);
+```php
+$kernel->setChannel('web_project');
 ```
 
-### 6. 載入驗證碼模組
+### 5. Limit the online session number. *(not required)*
 
-設定一個驗證碼服務。舉例： Google reCAPTCHA
+Only allow 10 sessions to view current page. The default expire time is 300 seconds.
 
-```
-$shieldon->setCaptcha(new \Shieldon\Captcha\Recaptcha([
-    'key' => '6LfkOaUUAAAAAH-AlTz3hRQ25SK8kZKb2hDRSwz9',
-    'secret' => '6LfkOaUUAAAAAJddZ6k-1j4hZC1rOqYZ9gLm0WQh',
-]));
+```php
+$kernel->limitSession(10, 300);
 ```
 
-### 7. 開始報護您的網站
+### 6. Load the Captcha modules.
 
+Set a Captcha servie. For example: Google recaptcha.
+
+```php
+$kernel->setCaptcha(
+    new \Shieldon\Firewall\Captcha\Recaptcha([
+        'key' => '6LfkOaUUAAAAAH-AlTz3hRQ25SK8kZKb2hDRSwz9',
+        'secret' => '6LfkOaUUAAAAAJddZ6k-1j4hZC1rOqYZ9gLm0WQh',
+    ])
+);
 ```
-$result = $shieldon->run();
 
-if ($result !== $shieldon::RESPONSE_ALLOW) {
-    if ($shieldon->captchaResponse()) {
+### 7. Start protecting your website
 
-        // 解封目前的工作階段
-        $shieldon->unban();
+```php
+$result = $kernel->run();
+
+if ($result !== $kernel::RESPONSE_ALLOW) {
+    if ($kernel->captchaResponse()) {
+        // Unban current session.
+        $kernel->unban();
     }
-    // 輸出結果頁，HTTP 回應碼設為 200。
-    $shieldon->output(200);
+
+    $response = $kernel->respond();
+
+    if ($response->getStatusCode() !== 200) {
+        $httpResolver = new \Shieldon\Firewall\HttpResolver();
+        $httpResolver($response);
+    }
 }
-```
-
-就是這樣囉。
-
-## 防火牆面板
-
-即使您沒有使用防火牆實例，但您仍可以使用防火牆面板來檢示數據和圖表。
-
-試試以下的程式碼：
 
 ```
-$shieldon = \Shieldon\Container::get('shieldon');
 
-// 進入防火牆面板
-$controlPanel = new \Shieldon\FirewallPanel($shieldon);
-$controlPanel->entry();
-```
-
-用預設的帳號及密碼登入即可。
+That's it.

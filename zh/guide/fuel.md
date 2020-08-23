@@ -1,79 +1,103 @@
 # Fuel
 
-FuelPHP 是一套簡單，富有彈性, 社群驅動的 PHP 網站框架。
+FuelPHP is a simple, flexible, community driven PHP web framework.
 
-![Fuel 框架防火牆](https://shieldon.io/images/home/fuel-framework-firewall.png)
+![Firewall in Fuel Framework](https://shieldon.io/images/home/fuel-framework-firewall.png)
 
-## 安裝
+## Installation
 
-使用 PHP Composer:
-
-```php
-composer require shieldon/shieldon
-```
-
-或者下載後引入 Shieldon 自動載入器。
+Use PHP Composer:
 
 ```php
-require 'Shieldon/autoload.php';
+composer require shieldon/shieldon ^2
 ```
 
-## 部署
+## Implementing
 
-### 步驟
+### Steps
 
-#### 1. 在初始化核心之前。
+#### 1. Before initializing Core
 
-在您的 `fuel/app/bootstrap.php` 中，下面這一行之後：
+In your `fuel/app/bootstrap.php`, after this line:
 
 ```php
 require COREPATH.'bootstrap.php';
 ```
-加入以下的程式碼：
+Add the following code:
+
+Example:
 
 ```php
 /*
 |--------------------------------------------------------------------------
-| 運行 Shieldon 防火牆
+| Run The Shieldon Firewall
 |--------------------------------------------------------------------------
 |
-| Shieldon 防火牆將開始監看所有進入您網站的 HTTP 請求。
+| Shieldon Firewall will watch all HTTP requests coming to your website.
 |
 */
-
 if (isset($_SERVER['REQUEST_URI'])) {
 
-	// 注意這個目錄必須是可寫入。
-	// 我們把它放在 `fuel/app/tmp` 目錄中。
-    $firewallstorage = __DIR__ . '/tmp/shieldon';
+    // This directory must be writable.
+    // We put it in the `fuel/app/tmp` directory.
+    $storage = __DIR__ . '/tmp/shieldon_firewall';
 
-    $firewall = new \Shieldon\Firewall($firewallstorage);
-    $firewall->restful();
-    $firewall->run();
+    $firewall = new \Shieldon\Firewall\Firewall();
+    $firewall->configure($storage);
+    $firewall->controlPanel('/firewall/panel');
+
+    $response = $firewall->run();
+
+    if ($response->getStatusCode() !== 200) {
+        $httpResolver = new \Shieldon\Firewall\HttpResolver();
+        $httpResolver($response);
+    }
 }
 ```
 
-#### 2. 為防火牆面板定義路由
+Please make sure that `$storage` directory is existed and writable.
 
-現在，修改您的 `fuel/app/config/routes.php` 檔案且加入以下的程式碼。
+#### 2.  Define a Route for Firewall Panel.
+
+Now, modify your `fuel/app/config/routes.php` and add the following code.
+
+Example:
 
 ```php
-'firewall/panel' => function () {
-    $firewall = \Shieldon\Container::get('firewall');
-    $controlPanel = new \Shieldon\FirewallPanel($firewall);
-    $controlPanel->entry();
-    exit;
-}
+'firewall/panel(:everything)' => function () {
+    $panel = new \Shieldon\Firewall\Panel();
+    $panel->entry();
+},
 ```
 
-就是這樣囉。
+The full example might look like this.
 
-您可以由 `/firewall/panel` 連接防火牆面板，在瀏覽器上打上網址：
+Example:
 
+```php
+return array(
+    '_root_'  => 'welcome/index',  // The default route
+    '_404_'   => 'welcome/404',    // The main 404 route
+    
+    'hello(/:name)?' => array('welcome/hello', 'name' => 'hello'),
+
+    'firewall/panel(:everything)' => function () {
+        $panel = new \Shieldon\Firewall\Panel();
+        $panel->entry();
+    },
+);
 ```
-https://for.example.com/firewall/panel
+
+That's it.
+
+## Control Panel
+
+You can access the Firewall Panel by `/firewall/panel`, to see the page, go to this URL in your browser.
+
+```bash
+https://yoursite.com/firewall/panel
 ```
 
-預設的登入帳號是 `shieldon_user` 而密碼是 `shieldon_pass`。在您登入防火牆面板之後，第一件該做的事情就是更改帳號及密碼。
+The default login is `shieldon_user` and `password` is `shieldon_pass`. After logging in the Firewall Panel, the first thing you need to do is to change the login and password.
 
-如果在設定區塊中的 `守護進程` 有啟用的話，Shieldon 將會開始監看您的網站，請確定您已經把設定值都設定正確。
+Shieldon Firewall will start watching your website if it get enabled in `Deamon` setting section, make sure you have set up the settings correctly.

@@ -1,5 +1,5 @@
-# 封鎖全部
+# Block All
 
-您應該看不到這個頁面才對。
+You should not be seeing this page.
 
 

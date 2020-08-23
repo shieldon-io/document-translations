@@ -4,8 +4,6 @@
 - [SQLite](https://shieldon.io/en/docs/driver/sqlite.html)
 - [File](https://shieldon.io/en/docs/driver/file.html)
 - [Redis](https://shieldon.io/en/docs/driver/redis.html)
-- [MemCache](https://shieldon.io/en/docs/driver/memcache.html) (ongoing...)
-- [MongoDB](https://shieldon.io/en/docs/driver/mongodb.html) (ongoing...)
 
 ## Interface
 

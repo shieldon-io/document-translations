@@ -1,90 +1,100 @@
 # Symfony
 
-Symfony 是用來建造網站應用程式、API、微服務和網站服務的一組可重用的 PHP 組件和 PHP 框架。
+Symfony is a set of reusable PHP components and a PHP framework to build web applications, APIs, microservices and web services.
 
-這個指南已經成功在 `4.3` 版成功測試，但我認為它也可用在較舊的版本上。
+This guide has been tested successfully in version `4.3`, but I think it can be used older versions as well.
 
-Symfony 沒有中介程式的概念，因此您可以建立一個母控制器來部署 Shieldon 防火牆，就像我們的　[CodeIgniter 指南](https://shieldon.io/en/guide/codeigniter.html) 一樣。
+Symfony doesn't have a middleware concept, therefore you can create a parent controller to implement Shieldon Firewall just like the steps in our [CodeIgniter guide](https://shieldon.io/en/guide/codeigniter.html).
 
-如果您不喜歡初始化 Shieldon 防火牆在母控制器，這裡的步驟，為引導程式的模式，您可以試試看。
+If you don't like to initialize Shieldon Firewall in a parent controller, here are the steps that called Bootstrap mode you can try.
 
-![Symfony 框架防火牆](https://shieldon.io/images/home/symfony-framework-firewall.png)
+![Firewall in Symfony Framework](https://shieldon.io/images/home/symfony-framework-firewall.png)
 
-## 安裝
+## Installation
 
-使用 PHP Composer:
-
-```php
-composer require shieldon/shieldon
-```
-
-或者下載後引入 Shieldon 自動載入器。
+Use PHP Composer:
 
 ```php
-require 'Shieldon/autoload.php';
+composer require shieldon/shieldon ^2
 ```
 
-## 部署
+This will also install dependencies built for Shieldon:
 
-### 引導程式
+- [shieldon/psr-http](https://github.com/terrylinooo/psr-http) The PSR-7, 15, 17 Implementation with full documented and well tested.
+- [shieldon/event-dispatcher](https://github.com/terrylinooo/event-dispatcher) The simplest event dispatcher.
+- [shieldon/web-security](https://github.com/terrylinooo/web-security) The collection of functions about web security.
+- [shieldon/messenger](https://github.com/terrylinooo/messenger) The collection of modules of sending message to third-party API or service, such as Telegram, Line, RocketChat, Slack, SendGrid, MailGun and more...
 
-#### 1. 開初始化核心之前
+## Implementing
 
-在您的 `config/bootstrap.php` 中，在這一行之後：
+### Bootstrap
+
+#### 1. Before initializing Kernel
+
+In your `config/bootstrap.php`, after this line:
 
 ```php
 require dirname(__DIR__).'/vendor/autoload.php';
 ```
+Add the following code:
 
-加入以下的程式碼：
-
+Example:
 ```php
 /*
 |--------------------------------------------------------------------------
-| 運行 Shieldon 防火牆
+| Run The Shieldon Firewall
 |--------------------------------------------------------------------------
 |
-| Shieldon 防火牆將開始監看所有進入您網站的 HTTP 請求。
-|
+| Shieldon Firewall will watch all HTTP requests coming to your website.
 */
-
 if (isset($_SERVER['REQUEST_URI'])) {
 
-    // 注意這個目錄必須是可寫入。
-    $firewallstorage = __DIR__ . '/../storage/shieldon';
+	// This directory must be writable.
+    $storage = __DIR__ . '/../storage/shieldon';
 
-    $firewall = new \Shieldon\Firewall($firewallstorage);
-    $firewall->restful();
-    $firewall->run();
+    $firewall = new \Shieldon\Firewall\Firewall();
+    $firewall->configure($storage);
+
+    // The base url for the control panel.
+    $firewall->controlPanel('/firewall/panel/');
+
+    $response = $firewall->run();
+
+    if ($response->getStatusCode() !== 200) {
+        $httpResolver = new \Shieldon\Firewall\HttpResolver();
+        $httpResolver($response);
+    }
 }
 ```
 
-#### 2. 為防火牆面板定義路由。
+#### 2.  Define a Route for Firewall Panel.
 
-建立一個控制器叫作 `FirewallPanelController` 由以下命令產生：
+Create a controller named `FirewallPanelController` by typing the following command.
 
+Example:
 ```bash
 php bin/console make:controller FirewallPanelController
 ```
 
-在類別 `FirewallPanelController` 控制器中加入幾行：
+Add several lines in the `FirewallPanelController` controller class:
 
+Example:
 ```php
-$firewall = \Shieldon\Container::get('firewall');
-$controlPanel = new \Shieldon\FirewallPanel($firewall);
-$controlPanel->entry();
-exit;
+$panel = new \Shieldon\Firewall\Panel();
+$panel->entry();
 ```
 
-如果您已經有啟用 CSRF 保護，加入這些行：
+If you have CSRF enabled, add these lines:
 
+Example:
 ```php
 $csrf = $this->container->get('security.csrf.token_manager');
 $token = $csrf->refreshToken('key');
 ```
 
-完整的範例程式碼會看起來像這樣：
+The full example will look like this:
 
+Example:
 ```php
 <?php
 
@@ -96,32 +106,42 @@ use Symfony\Component\Routing\Annotation\Route;
 class FirewallPanelController extends AbstractController
 {
     /**
-     * @Route("/firewall/panel", name="firewall_panel")
+     * @Route("/firewall/panel/", name="firewall_panel")
      */
-    public function index()
+    public function panel()
     {
-        $firewall = \Shieldon\Container::get('firewall');
-        $controlPanel = new \Shieldon\FirewallPanel($firewall);
+        $panel = new \Shieldon\Firewall\Panel();
 
-        // 如果您有安裝 `symfony/security-csrf` 的話。
+        // If your have `symfony/security-csrf` installed.
         $csrf = $this->container->get('security.csrf.token_manager');
-        $token = $csrf->refreshToken('key');
+        $token = $csrf->refreshToken('key')->getValue();
 
-        $controlPanel->csrf('_token', $token);
-        $controlPanel->entry();
+        $panel->csrf(['_token' => $token]);
+        $panel->entry();
         exit;
+    }
+
+    /**
+     * @Route("/firewall/panel/{class}/{method}", name="firewall_panel_page")
+     */
+    public function page()
+    {
+        $this->panel();
     }
 }
 ```
 
-就是這樣囉。
+That's it.
 
-您可以由 `/firewall/panel` 連接防火牆面板，在瀏覽器上打上網址：
+You can access the Firewall Panel by `/firewall/panel`, to see the page, go to this URL in your browser.
+
+## Control Panel
 
 ```bash
-https://for.example.com/firewall/panel
+https://yourwebsite.com/firewall/panel
 ```
 
-預設的登入帳號是 `shieldon_user` 而密碼是 `shieldon_pass`。在您登入防火牆面板之後，第一件該做的事情就是更改帳號及密碼。
+The default login is `shieldon_user` and `password` is `shieldon_pass`. After logging in the Firewall Panel, the first thing you need to do is to change the login and password.
 
-如果在設定區塊中的 `守護進程` 有啟用的話，Shieldon 將會開始監看您的網站，請確定您已經把設定值都設定正確。
+Shieldon Firewall will start watching your website if it get enabled in `Deamon` setting section, make sure you have set up the settings correctly.
+

@@ -1,70 +1,70 @@
 # IP
 
-## `Shieldon\Component\Ip`
+## `Shieldon\Firewall\Component\Ip`
 
-- *return* self
+- **return** `self`
 
 ```php
-$ip = new \Shieldon\Component\Ip();
+$ip = new \Shieldon\Firewall\Component\Ip();
 $shieldon->setComponent($ip);
 ```
 
-### inRange
+### inRange(`$ip`, `$range`)
 
-- *param* string `$ip` IP to check in IPV4 and IPV6 format
-- *param* mixed `$range` IP/CIDR netmask
-- *return* boolean
+- **param** `string` $ip `-` IP to check in IPV4 and IPV6 format
+- **param** `mixed` $range `-` IP/CIDR netmask
+- **return** bool
 
 ```php
 $result = $ip->inRange('123.22.33.44', '123.22.33.1/24');
 
 // true
 ```
-### setAllowedList
+### setAllowedItems(`$ips`)
 
-- *param* array `$ips` Ip array.
-- *return* void
+- **param** `array` $ips `-` A colloection of IP addresses.
+- **return** `void`
 
 ```php
-$ip = new \Shieldon\Component\Ip();
+$ip = new \Shieldon\Firewall\Component\Ip();
 
 $allowedIps = [
     '123.22.33.44',
     '88.22.33.55',
 ];
 
-$ip->setAllowedList($allowedIps);
+$ip->setAllowedItems($allowedIps);
 $shieldon->setComponent($ip);
 ```
 
-### setAllowedItem
+### setAllowedItem(`$ip`)
 
-- *param* string `$ip` Single Ip address
-- *return* void
+- **param** `string` $ip `-` Single Ip address
+- **return** `void`
 
 ```php
-$ip = new \Shieldon\Component\Ip();
+$ip = new \Shieldon\Firewall\Component\Ip();
 $ip->setAllowedItem('123.22.33.44');
 $shieldon->setComponent($ip);
 ```
 
-### getAllowedList
+### getAllowedItems()
 
-- *return* array
+- **return** `array`
 
 ```php
-$ip = new \Shieldon\Component\Ip();
-$list = $ip->getAllowedList();
+$ip = new \Shieldon\Firewall\Component\Ip();
+$list = $ip->getAllowedItems();
 
 // ['123.22.33.44', '123.22.33.43', 'xxx.xxx.xxx.xxx']
 ```
-### setDeniedList
+### setDeniedItems(`$ips`)
 
-- *param* array `$ips` IP array.
-- *return* void
+- **param** `array` $ips `-` IP array.
+- **return** `void`
 
 ```php
-$ip = new \Shieldon\Component\Ip();
+$ip = new \Shieldon\Firewall\Component\Ip();
 
 $deniedIps = [
     '123.22.33.44',
@@ -75,24 +75,24 @@ $ip->setDenieddList($deniedIps);
 $shieldon->setComponent($ip);
 ```
 
-### setDeniedItem
+### setDeniedItem(`$ip`)
 
-- *param* string `$ip` Single Ip address
-- *return* void
+- **param** `string` $ip `-` Single Ip address
+- **return** `void`
 
 ```php
-$ip = new \Shieldon\Component\Ip();
+$ip = new \Shieldon\Firewall\Component\Ip();
 $ip->setDeniedItem('123.22.33.44');
 $shieldon->setComponent($ip);
 ```
 
-### getDeniedList
+### getDeniedItems()
 
-- *return* array
+- **return** `array`
 
 ```php
-$ip = new \Shieldon\Component\Ip();
-$list = $ip->getDenieddList();
+$ip = new \Shieldon\Firewall\Component\Ip();
+$list = $ip->getDeniedItems();
 
 // ['123.22.33.44', '123.22.33.43', 'xxx.xxx.xxx.xxx']
 ```

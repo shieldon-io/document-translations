@@ -27,15 +27,19 @@ You can visit the plugin author - [Terry L.](https://terryl.in)'s blog, try relo
 
 User has been asked for CAPTCHA to continue reading.
 
-![](https://i.imgur.com/T78FlVR.png)
+![](https://i.imgur.com/oU3Cm6W.png)
 
 Setting page.
 
-![](https://i.imgur.com/qYbTvb5.png)
+![](https://i.imgur.com/6wd46Av.png)
 
-IP Manager
+Rule table.
 
-![](https://i.imgur.com/WAEI27e.png)
+![](https://i.imgur.com/it7pyqo.png)
+
+Operation status.
+
+![](https://i.imgur.com/gjR7Bbm.png)
 
 
 ***Check Out My other WordPress works***

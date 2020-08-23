@@ -1,19 +1,19 @@
 # Header
 
-## `Shieldon\Component\Header`
+## `Shieldon\Firewall\Component\Header`
 
-- *return* self
+- **return** `self`
 
 ```php
-$header = new \Shieldon\Component\Header();
+$header = new \Shieldon\Firewall\Component\Header();
 $shieldon->setComponent($header);
 ```
 
-## 嚴格模式
+## Strict Mode
 
-- 未帶有一般標頭資訊的訪客會被封鎖。
+- Visitors without common header information will be blocked.
 
-```
+```php
 $header->setStrict(true);
 ```
 

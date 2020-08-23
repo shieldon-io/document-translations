@@ -1,11 +1,11 @@
 # Rdns
 
-## `Shieldon\Component\Rdns`
+## `Shieldon\Firewall\Component\Rdns`
 
-- *return* self
+- **return** `self`
 
 ```php
-$rdns = new \Shieldon\Component\Rdns();
+$rdns = new \Shieldon\Firewall\Component\Rdns();
 $shieldon->setComponent($rdns);
 ```
 
@@ -14,6 +14,6 @@ $shieldon->setComponent($rdns);
 - Visitors with empty Rdns record will be blocked.
 - IP resolved hostname (Rdns) and IP address must match.
 
-```
+```php
 $rdns->setStrict(true);
 ```

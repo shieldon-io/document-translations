@@ -1,6 +1,6 @@
 # ImageCaptcha
 
-## `Shieldon\Captcha\ImageCaptcha`
+## `Shieldon\Firewall\Captcha\ImageCaptcha`
 
 - **param** `array` $config `-` The settings.
 - **return** `void`

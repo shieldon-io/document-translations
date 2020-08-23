@@ -1,6 +1,6 @@
 # ReCaptcah
 
-## `Shieldon\Captcha\Recaptcha`
+## `Shieldon\Firewall\Captcha\Recaptcha`
 
 - **param** `array` $config `-` The settings.
 - **return** `void`

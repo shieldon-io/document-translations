@@ -11,12 +11,12 @@ $config = [
     ]
 ];
 
-$shieldon = new \Shieldon\Shieldon($config);
+$kernel = new \Shieldon\Shieldon($config);
 ```
 
 *setProperty*
 ```php
-$shieldon->setProperty('time_unit_quota', [
+$kernel->setProperty('time_unit_quota', [
     's' => 2, 'm' => 10, 'h' => 30, 'd' => 60
 ]);
 ```
@@ -30,7 +30,7 @@ $config = [
     ]
 ];
 
-$shieldon->setProperties($config);
+$kernel->setProperties($config);
 ```
 ## Default
 
@@ -94,4 +94,81 @@ Setting the limits and quotas of being flagged as unusual behavior for your vist
 
 ### Others
 
-Please ignore them.
+You can checkout the function `get_default_properties()` in `Shieldon/Firewall/Helpers` class if I don't mention them.
+```php
+/**
+ * The default settings of Shieldon core.
+ *
+ * @return array
+ */
+function get_default_properties(): array
+{
+    return [
+
+        'time_unit_quota' => [
+            's' => 2,
+            'm' => 10,
+            'h' => 30,
+            'd' => 60
+        ],
+
+        'time_reset_limit'       => 3600,
+        'interval_check_referer' => 5,
+        'interval_check_session' => 5,
+        'limit_unusual_behavior' => [
+            'cookie'  => 5,
+            'session' => 5,
+            'referer' => 10
+        ],
+
+        'cookie_name'         => 'ssjd',
+        'cookie_domain'       => '',
+        'cookie_value'        => '1',
+        'display_online_info' => true,
+        'display_user_info'   => false,
+        'display_http_code'   => false,
+        'display_reason_code' => false,
+        'display_reason_text' => false,
+
+        /**
+         * If you set this option enabled, Shieldon will record every CAPTCHA fails 
+         * in a row, once that user have reached the limitation number, Shieldon will
+         * put it as a blocked IP in rule table, until the new data cycle begins.
+         * 
+         * Once that user have been blocked, they are still access the warning page, 
+         * it means that they are not humain for sure, so let's throw them into the 
+         * system firewall and say goodbye to them forever.
+         */
+        'deny_attempt_enable' => [
+            'data_circle'     => false,
+            'system_firewall' => false,
+        ],
+
+        'deny_attempt_notify' => [
+            'data_circle'     => false,
+            'system_firewall' => false,
+        ],
+
+        'deny_attempt_buffer' => [
+            'data_circle'     => 10,
+            'system_firewall' => 10,
+        ],
+
+        /**
+         * To prevent dropping social platform robots into iptables firewall, such 
+         * as Facebook, Line and others who scrape snapshots from your web pages, 
+         * you should adjust the values below to fit your needs. (unit: second)
+         */
+        'record_attempt_detection_period' => 5, // 5 seconds.
+
+        // Reset the counter after n second.
+        'reset_attempt_counter' => 1800, // 30 minutes.
+
+        // System-layer firewall, ip6table service watches this folder to 
+        // receive command created by Shieldon Firewall.
+        'iptables_watching_folder' => '/tmp/',
+    ];
+}
+```
+
+

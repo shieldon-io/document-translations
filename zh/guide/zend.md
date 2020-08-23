@@ -1,61 +1,56 @@
 # Zend
 
-Zend 框架有提供兩個官方初始架構 - Zend MVC and Zend Expressive。
+Zend framework officially provides two types of skeleton - Zend MVC and Zend Expressive.
 
-先不管你用那一種初始架構，這個指南應該會給您一些關於如何部署 Shieldon 防火牆的點子。不確定那一種方法是最佳作法，您可以挑一個偏好的。
+No matter which skeleton you are using, this guide might give you some ideas on how to implement Shieldon Firewall, not sure which way is considered best practice to Zend, you can pick one you prefer.
 
-![Zend 框架防火牆](https://shieldon.io/images/home/zend-framework-firewall.png)
+![Firewall in Zend Framework](https://shieldon.io/images/home/zend-framework-firewall.png)
 
-這些點子有：
+## Installation
 
-- PSR-7 中介程式。 (適用於版本 Zend 3.1.0 以前)
-- PSR-15 Middleware (適用於 Zend 3.1.0 之後)
-- 引導程式
+Use PHP Composer:
 
 ```php
-\Shieldon\Integration\Zend\Psr7Middleware
-\Shieldon\Integration\Zend\Psr15Middleware
-\Shieldon\Integration\Bootstrapper
+composer require shieldon/shieldon ^2
 ```
 
-如果您的 Zend 應用程式有 CSRF 防護，確定要定義一個名為 `_shieldon_csrf` 的 CSRF token 給 Shieldon 準備好的中介程式。
+This will also install dependencies built for Shieldon:
 
-## 安裝
+- [shieldon/psr-http](https://github.com/terrylinooo/psr-http) The PSR-7, 15, 17 Implementation with full documented and well tested.
+- [shieldon/event-dispatcher](https://github.com/terrylinooo/event-dispatcher) The simplest event dispatcher.
+- [shieldon/web-security](https://github.com/terrylinooo/web-security) The collection of functions about web security.
+- [shieldon/messenger](https://github.com/terrylinooo/messenger) The collection of modules of sending message to third-party API or service, such as Telegram, Line, RocketChat, Slack, SendGrid, MailGun and more...
 
-使用 PHP Composer:
-
-```php
-composer require shieldon/shieldon
-```
-
-或者下載後引入 Shieldon 自動載入器。
-
-```php
-require 'Shieldon/autoload.php';
-```
-
-## 部署
+## Implementing
 
 ### Zend Expressive
 
-這是一個使用 PSR-15 規範的中介程式在 Zend Expressive 架構的例子。
+This is an example that shows you using a PSR-15 Middleware in Zend Expressive skeleton.
 
-#### 1. 定義一個中介程式
+#### 1. Register a middleware.
 
-在您的 `pipeline.php` 中，加入這一行。
+There is a [integration class](https://github.com/terrylinooo/shieldon/blob/2.x/src/Firewall/Integration/ZendPsr15.php) ready for Zend Expressive.
+
+In your `pipeline.php`, add this line:
+
+Example:
 
 ```php
-$app->pipe(\Shieldon\Integration\Zend\Psr15Middleware::class);
+$app->pipe(\Shieldon\Firewall\Integration\ZendPsr15:class);
 ```
 
-#### 2. 訂義一個處理程式
+#### 2.  Define a handler.
 
-我們進到 `App/src/Handler` 目錄並建立一個 PHP 檔案，命名為 `FirewallPanelHandler`。
+Let's go to `App/src/Handler` directory and create a PHP file named `FirewallPanelHandler`.
 
-複製下方的文字，把它們貼到那個檔案裡。
+Copy the text blew, paste them into that file.
+
+Example:
 
 ```php
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Handler;
 
@@ -65,68 +60,87 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Zend\Diactoros\Response;
 
 /**
- * Firewall 面板處理程式
- * 如果您有啟用 CSRF，必須確認 CSRF token 被轉傳至控制面板裡。 
+ * Firewall Panel Handler
+ * If you have CSRF enabled, make sure to pass the csrf token to the control panel.
  */
 class FirewallPanelHandler implements RequestHandlerInterface
 {
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $firewall = \Shieldon\Container::get('firewall');
-        $controlPanel = new \Shieldon\FirewallPanel($firewall);
-        $controlPanel->entry();
+        $panel = new \Shieldon\Firewall\Panel();
+        $panel->entry();
 
         return new Response();
     }
 }
 ```
 
-#### 3. 為防火牆面板定義路由。
+#### 3.  Define a route for firewall panel.
 
-在您的 `route.php` 中，加入這一行：
+In your `route.php`, add this line:
 
+Example:
 ```php
-$app->route('/firewall/panel', App\Handler\FirewallPanelHandler::class, ['GET', 'POST'], 'panel');
+
+// Begin - Shieldon Firewall
+
+$app->route('/firewall/panel/', App\Handler\FirewallPanelHandler::class, ['GET', 'POST']);
+
+foreach(\Shieldon\Firewall\Panel::getRoutes() as $route) {
+    $app->route("/firewall/panel/$route/", App\Handler\FirewallPanelHandler::class, ['GET', 'POST']);
+}
+
+// End - Shieldon Firewall
 ```
+
+That's it.
 
 ### Zend MVC
 
-因為我不確定您用多舊版本的 Zend 框架，因此我在這個例子中捨棄用中介程式的方法，才能確定這個指南在不管多舊版本的 Zend 都能正常運作。
+I am not sure how old version of Zend framework you are using, therefore I decide to get rid of middleware to make sure this guide will work with the most versions of Zend.
 
-#### 1. 開初始化核心之前
+#### 1. Before initializing Core
 
-在您的 `public/index.php` 中的這一行之後：
+In your `public/index.php` under this line:
 
 ```php
 include __DIR__ . '/../vendor/autoload.php';
 ```
 
-加入以下的程式碼：
+Add the following code:
 
 ```php
 /*
 |--------------------------------------------------------------------------
-| 運行 Shieldon 防火牆
+| Run The Shieldon Firewall
 |--------------------------------------------------------------------------
 |
-| Shieldon 防火牆將開始監看所有進入您網站的 HTTP 請求。
+| Shieldon Firewall will watch all HTTP requests coming to your website.
 |
 */
-
 if (isset($_SERVER['REQUEST_URI'])) {
 
-    $firewallstorage = __DIR__ . '/../data/shieldon';
+    // This directory must be writable.
+    $storage = dirname($_SERVER['SCRIPT_FILENAME']) . '/../shieldon_firewall';
 
-    $firewall = new \Shieldon\Firewall($firewallstorage);
-    $firewall->restful();
-    $firewall->run();
+    $firewall = new \Shieldon\Firewall\Firewall();
+    $firewall->configure($storage);
+    $firewall->controlPanel('/firewall/panel');
+    $response = $firewall->run();
+
+    if ($response->getStatusCode() !== 200) {
+        $httpResolver = new \Shieldon\Firewall\HttpResolver();
+        $httpResolver($response);
+    }
 }
 ```
-下一個步驟是為控制面板建立一個控制器。
 
-#### 2.  定義一個控制器
+The next step is to create a controller for control panel.
 
-我們來建立一個控制器並命明為 `FirewallPanelController`。這是 Shieldon 防火牆的控制面板的入口。
+
+#### 2.  Define a controller.
+
+Let's create a controller and named it with `FirewallController`.
 
 ```php
 <?php
@@ -135,51 +149,64 @@ namespace Application\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 
-class FirewallPanelController extends AbstractActionController
+class FirewallController extends AbstractActionController
 {
     /**
-     * 這是我們的防火牆面板的入口。
-     *
-     * @return string
+     * The entry point of the Firewall Panel.
      */
-    public function indexAction()
+    public function panelAction()
     {
-       // 從 Shieldon 容器中取得防火牆的實例。
-       $firewall = \Shieldon\Container::get('firewall');
-
-       // 進入防火牆面板。
-       $controlPanel = new \Shieldon\FirewallPanel($firewall);
-       $controlPanel->entry();
-       exit;
+        $panel = new \Shieldon\Firewall\Panel();
+        $panel->entry();
     }
 }
 ```
 
-#### 3. 為防火牆面板定義路由。
+#### 3.  Define a route for firewall panel.
 
-在您的 `module.config.php` 中，加進程式碼如下。
+Open the `module.config.php`, the location is at:
+
+```bash
+module/Application/config/module.config.php
+```
+
+**(3-1)** Inside the array `['router']['routes']` add the code as below.
+
+Example:
 
 ```php
 'firewallpanel' => [
-    'type' => Literal::class,
+    'type' => Segment::class,
     'options' => [
-        'route'    => '/firewall/panel',
+        'route'    => '/firewall/panel[:slug]',
+        'constraints' => [
+            'slug' => '[a-zA-Z0-9\/]*',
+        ],
         'defaults' => [
-            'controller' => Controller\FirewallPanelController::class,
-            'action'     => 'index',
+            'controller' => Controller\FirewallController::class,
+            'action'     => 'panel',
         ],
     ],
 ],
 ```
 
-就是這樣囉。
+**(3-2)** Inside the array `['controllers']['factories']` add the code as below.
 
-您可以由 `/firewall/panel` 連接防火牆面板，在瀏覽器上打上網址：
-
-```bash
-https://for.example.com/firewall/panel
+```php
+Controller\FirewallController::class => InvokableFactory::class,
 ```
 
-預設的登入帳號是 `shieldon_user` 而密碼是 `shieldon_pass`。在您登入防火牆面板之後，第一件該做的事情就是更改帳號及密碼。
+That's it.
 
-如果在設定區塊中的 `守護進程` 有啟用的話，Shieldon 將會開始監看您的網站，請確定您已經把設定值都設定正確。
+
+## Control Panel
+
+You can access the Firewall Panel by `/firewall/panel/`, to see the page, go to this URL in your browser.
+
+```bash
+https://yourwebsite.com/firewall/panel
+```
+
+The default login is `shieldon_user` and `password` is `shieldon_pass`. After logging in the Firewall Panel, the first thing you need to do is to change the login and password.
+
+Shieldon Firewall will start watching your website if it get enabled in `Deamon` setting section, make sure you have set up the settings correctly.

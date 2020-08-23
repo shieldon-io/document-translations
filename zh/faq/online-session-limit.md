@@ -1,8 +1,7 @@
-# 線上工作階段控制
+# Online Session limit
 
-這個頁面正限制最大線上瀏覽人數為 **5**，而每位使用者有 **300** 秒的時間可以檢視這張網頁。
+This page is limiting the maximum user number of **5**, and each user has **300** seconds in viewing this page.
 
-如果您看到這段文章表示這個頁面還沒有達到限制唷。
-
+If you see this text that it means the online user number on this page does not reach the limitation yet.
 
 

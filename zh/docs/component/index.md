@@ -1,6 +1,6 @@
-# 組件
+# Components
 
-Shieldon 組件是控制器的集合，讓您能增加客製化的規格，在開始偵測使用者的行為之前許可或拒絕使用者。
+Shieldon components are are sets of controller that allow you to add more custom rules to allow or deny before detecting user's behavior.
 
 - [TrustedBot](https://shieldon.io/en/docs/component/trustedbot.html)
 - [Ip](https://shieldon.io/en/docs/component/ip.html)
@@ -10,70 +10,311 @@ Shieldon 組件是控制器的集合，讓您能增加客製化的規格，在�
 
 ## `TrustedBot`
 
-TrustedBot 組件能讓受歡迎的搜尋引擎來索引您的網站不受限制。請至少載入這個組件。
+TrustedBot component allows popular search engines to crawl your site without limit. please load this commponent at least .
 
 ## `Ip`
 
-Ip component 能讓您設定單一 IP 位址或者 IP 範圍在白名單或黑名單之中。
+Ip component allows you to set single IPs or IP ranges in the whitelist or the blacklist.
 
 ## `UserAgent`
 
-UserAgent 組件預設把廣為人知的不良機器人為為黑名登。您可以在 UserAgent 的黑名單中增加您的名單。
+UserAgent component blocks well-known bad bots by default. You can add your list in UserAgent's blacklist.
 
 ## `Header`
 
-Header 組件在嚴格模式時封鎖未帶有常見標題資訊的訪客。
+Header component blocks vistors without common header information in strict mode, 
 
 ## `Rdns`
 
-Rdns 組件在嚴格模式時封鎖 IP 和反解域名不符合的訪客。
+Rdns component blocks vistors without Rdns recond or Rdns not match to IP address in strict mode.
 
 ---
 
-## API
+### setStrict(`$bool`)
 
-### setStrict
-
-- *param* boolean `$bool` `$bool` 設為 true 以啟用嚴格模式, false 反之亦然。
-- *return* void
+- **param** `bool` $bool `-` Set true to enble strict mode, false to disable it overwise.
+- **return** `void`
 
 ```php
 $component->setStrict(true);
 ```
 
-### setDeniedList
+---
 
-- *param* array `$stringList`
-- *return* void
+## Denied Trait
 
-```php
-$component->setDeniedList($stringList);
-```
+- setDeniedItem
+- setDeniedItems
+- getDeniedItem
+- getDeniedItems
+- removeDeniedItem
+- removeDeniedItems
+- hasDeniedItem
+- getDenyWithPrefix
+- removeDenyWithPrefix
+- isDenied
 
-### setDeniedItem
+### setDeniedItem(`$value`, `$key`)
 
-- *param* string `$string`
-- *return* void
+- **param** `string|array` $value `-` The value of the data.
+- **param** `string` $key `-` The key of the data.
+- **return** `void`
+
+Add an item to the blacklist pool.
+
+Example:
 
 ```php
 $component->setDeniedItem($string);
 ```
 
-### getDeniedList
+### setDeniedItems(`$itemList`)
 
-- *return* array
+- **param** `array` $itemList `-` String list.
+- **return** `void`
+
+Add items to the blacklist pool.
+
+Example:
 
 ```php
-$list = $component->getDeniedList();
+$component->setDeniedItems($stringList);
 ```
 
-### removeItem
+### getDeniedItem(`$key`)
 
-在許可清單和拒絕清單中移除項目 (如果有存在的話)
+- **param** `string` $key `-` The key of the data field.
+- **return** `string|array`
 
-- *param* string `$string`
-- *return* void
+Get an item from the blacklist pool.
+
+Example:
 
 ```php
-$list = $component->removeItem($string);
+$item = $component->getDeniedItems('this_item');
+```
+
+### getDeniedItems()
+
+- **return** `array`
+
+Get the items from the blacklist pool.
+
+```php
+$list = $component->getDeniedItems();
+```
+
+### removeDeniedItem(`$key`)
+
+- **param** `string` $key `-` The key of the data.
+- **return** `void`
+
+Remove a denied item if exists.
+
+```php
+$component->removeDeniedItem($string);
+```
+
+### removeDeniedItems()
+
+- **return** `void`
+
+Remove all denied items.
+
+```php
+$component->removeDeniedItems();
+```
+
+### hasDeniedItem(`$key`)
+
+- **param** `string` $key `-` The key of the data.
+- **return** `bool`
+
+Check if a denied item exists.
+
+Example:
+
+```php
+if ($component->hasDeniedItem('test')) {
+    echo 'item exists';
+} else {
+    echo 'item does not exist';
+}
+```
+
+### getDenyWithPrefix(`$key`)
+
+- **param** `string` $key `-` The key of the data.
+- **return** `array`
+
+Check if denied items exist with the same prefix.
+
+Example:
+
+```php
+$deniedList = $component->getDenyWithPrefix('test');
+```
+
+### removeDenyWithPrefix(`$key`)
+
+- **param** `string` $key `-` The key of the data.
+- **return** `void`
+
+Remove denied items with the same prefix.
+
+```php
+$component->removeDenyWithPrefix('test');
+```
+
+### isDenied()
+
+- **return** `bool`
+
+This method should adjust in extended class if need.
+
+```php
+
+if ($component->isDenied()) {
+    echo 'This user has been denied.';
+}
+```
+
+---
+
+## Allowed Trait
+
+- setAllowedItem
+- setAllowedItems
+- getAllowedItem
+- getAllowedItems
+- removeAllowedItem
+- removeAllowedItems
+- hasAllowedItem
+- getDenyWithPrefix
+- removeDenyWithPrefix
+- isAllowed
+
+### setAllowedItem(`$value`, `$key`)
+
+- **param** `string|array` $value `-` The value of the data.
+- **param** `string` $key `-` The key of the data.
+- **return** `void`
+
+Add an item to the blacklist pool.
+
+Example:
+
+```php
+$component->setAllowedItem($string);
+```
+
+### setAllowedItems(`$itemList`)
+
+- **param** `array` $itemList `-` String list.
+- **return** `void`
+
+Add items to the blacklist pool.
+
+Example:
+
+```php
+$component->setAllowedItems($stringList);
+```
+
+### getAllowedItem(`$key`)
+
+- **param** `string` $key `-` The key of the data field.
+- **return** `string|array`
+
+Get an item from the blacklist pool.
+
+Example:
+
+```php
+$item = $component->getAllowedItems('this_item');
+```
+
+### getAllowedItems()
+
+- **return** `array`
+
+Get the items from the blacklist pool.
+
+```php
+$list = $component->getAllowedItems();
+```
+
+### removeAllowedItem(`$key`)
+
+- **param** `string` $key `-` The key of the data.
+- **return** `void`
+
+Remove a allowed item if exists.
+
+```php
+$component->removeAllowedItem($string);
+```
+
+### removeAllowedItems()
+
+- **return** `void`
+
+Remove all allowed items.
+
+```php
+$component->removeAllowedItems();
+```
+
+### hasAllowedItem(`$key`)
+
+- **param** `string` $key `-` The key of the data.
+- **return** `bool`
+
+Check if a allowed item exists.
+
+Example:
+
+```php
+if ($component->hasAllowedItem('test')) {
+    echo 'item exists';
+} else {
+    echo 'item does not exist';
+}
+```
+
+### getDenyWithPrefix(`$key`)
+
+- **param** `string` $key `-` The key of the data.
+- **return** `array`
+
+Check if a allowed item exists with the same prefix.
+
+Example:
+
+```php
+$allowedList = $component->getDenyWithPrefix('test');
+```
+
+### removeDenyWithPrefix(`$key`)
+
+- **param** `string` $key `-` The key of the data.
+- **return** `void`
+
+Remove allowed items with the same prefix.
+
+```php
+$component->removeDenyWithPrefix('test');
+```
+
+### isAllowed()
+
+- **return** `bool`
+
+This method should adjust in extended class if need.
+
+```php
+
+if ($component->isAllowed()) {
+    echo 'This user has been allowed.';
+}
 ```

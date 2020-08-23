@@ -9,139 +9,196 @@ Slim framework is one of my favorites. Since Slim is a mirco framework, implemen
 Use PHP Composer:
 
 ```php
-composer require shieldon/shieldon
+composer require shieldon/shieldon ^2
 ```
 
-Or, download it and include the Shieldon autoloader.
-```php
-require 'Shieldon/autoload.php';
-```
+This will also install dependencies built for Shieldon:
+
+- [shieldon/psr-http](https://github.com/terrylinooo/psr-http) The PSR-7, 15, 17 Implementation with full documented and well tested.
+- [shieldon/event-dispatcher](https://github.com/terrylinooo/event-dispatcher) The simplest event dispatcher.
+- [shieldon/web-security](https://github.com/terrylinooo/web-security) The collection of functions about web security.
+- [shieldon/messenger](https://github.com/terrylinooo/messenger) The collection of modules of sending message to third-party API or service, such as Telegram, Line, RocketChat, Slack, SendGrid, MailGun and more...
 
 ## Implementing
 
-### Slim 3
-
-#### Middleware
-
-Shieldon supports most popular PHP frameworks, following its design pattern, Slim is one of them, so that there is a Middleware for Slim 3 already.
-
-```php
-$app->add(new \Shieldon\Integration\Slim\Slim3Middleware);
-```
-
-Reminer: If you have Slim-Csrf middleware implemented, make sure the order should look like this:
-
-```php
-$app->add(new \Shieldon\Integration\Slim\Slim3Middleware);
-$app->add(new \Slim\Csrf\Guard);
-```
-
-Notice: Slim-Csrf is no longer support Slim 3, if you would like to use it on Slim 3, be sure to install the older vision.
-
-```bash
-composer require slim/csrf:0.8.3
-```
-
-#### Route
-
-This route is the entry of Firewall Panel.
-
-```php
-$app->map(['GET', 'POST'], '/example/fiewall/panel', function (Request $request, Response $response, array $args) {
-    $firewall = \Shieldon\Container::get('firewall');
-    $controlPanel = new \Shieldon\FirewallPanel($firewall);
-    $controlPanel->csrf([
-        'csrf_name' => $request->getAttribute('csrf_name'),
-        'csrf_value' => $request->getAttribute('csrf_value')
-    ]);
-    $controlPanel->entry();
-});
-```
-
 ### Slim 4
 
-#### Middleware
+#### (1) Create a firewall middleware.
 
-Load Slim4Middleware at the first place.
+You can create a middleware by yourself or just use the [integration class](https://github.com/terrylinooo/shieldon/blob/2.x/src/Firewall/Integration/Slim4.php).
 
-```php
-$app->add(new \Shieldon\Integration\Slim\Slim4Middleware());
-```
-
-So, your middleware.php probably looks like this:
+Example:
 
 ```php
-return function (App $app) {
-    $app->add(new \Shieldon\Integration\Slim\Slim4Middleware());
-    $app->add(SessionMiddleware::class);
-};
-```
-
-#### Route
-
-This route is the entry of Firewall Panel.
-
-```php
-$app->map(['GET', 'POST'], '/example/fiewall/panel', function (Request $request, Response $response, array $args) {
-    $firewall = \Shieldon\Container::get('firewall');
-    $controlPanel = new \Shieldon\FirewallPanel($firewall);
-    $controlPanel->csrf([
-        'csrf_name' => $request->getAttribute('csrf_name'),
-        'csrf_value' => $request->getAttribute('csrf_value')
-    ]);
-    $controlPanel->entry();
-
-    return $response;
-});
-```
-
-Make sure to change all your routes to support Post method for making Captcha form worked, otherwise you will face this error.
-
-```json
+class FirewallMiddleware
 {
-    statusCode: 405,
-    error: {
-        type: "NOT_ALLOWED",
-        description: "Method not allowed."
+    /**
+     * Example middleware invokable class
+     *
+     * @param ServerRequest  $request PSR-7 request
+     * @param RequestHandler $handler PSR-15 request handler
+     *
+     * @return Response
+     */
+    public function __invoke(Request $request, RequestHandler $handler): Response
+    {
+        $response = $handler->handle($request);
+
+        $firewall = new \Shieldon\Firewall\Firewall($request, $response);
+
+        // The directory in where Shieldon Firewall will place its files.
+        $firewall->configure(__DIR__ . '/../cache/shieldon_firewall');
+        $response = $firewall->run();
+
+        if ($response->getStatusCode() !== 200) {
+            $httpResolver = new \Shieldon\Firewall\HttpResolver();
+            $httpResolver($response);
+        }
+
+        return $response;
     }
 }
 ```
 
-#### Bootstrapper
+#### (2) Add the firewall middleware in your application.
 
-There is an another way to avoid changing support method. It is `Bootstrapper` located at `Shieldon\Integration` namespace.
+For example, if you are using Slim 4 framework, the code should look like this.
 
-In the `public/index.php`, find this line:
+Example:
+
 ```php
-require __DIR__ . '/../vendor/autoload.php';
+$app->add(new FirewallMiddleware());
 ```
-Replace it with:
+
+Or, if you perfer to use the integration class, here is the code.
+
+Example:
+```php
+$app->add(new \Shieldon\Firewall\Integration\Slim4);
+```
+
+#### (3) Create a route for control panel.
+
+For example, if you are using Slim 4 framework, the code should look like this. Then you can access the URL `https://yourwebsite.com/firewall/panel/` to login to control panel.
+
+Example:
+```php
+$app->any('/firewall/panel[/{params:.*}]', function (Request $request, Response $response, $args) {
+
+$firewall = new \Shieldon\Firewall\Firewall($request);
+
+    // The directory in where Shieldon Firewall will place its files.
+    // Must be the same as firewallMiddleware.
+    $firewall->configure(__DIR__ . '/../cache/shieldon_firewall');
+
+    // The base url for the control panel.
+    $firewall->controlPanel('/firewall/panel/');
+
+    $panel = new \Shieldon\Firewall\Panel();
+
+    // Begin - Need to set up CSRF fields if you have enabled Slim-CSRF
+
+    $csrf = new \Slim\Csrf\Guard();
+    $nameKey = $csrf->getTokenNameKey();
+    $valueKey = $csrf->getTokenValueKey();
+
+    $csrfName = $request->getAttribute('csrf_name');
+    $csrfVale = $request->getAttribute('csrf_value');
+
+    $panel->csrf(
+        [$nameKey => $csrfName],
+        [$valueKey => $csrfVale]
+    );
+
+    // End - Slim-CSRF
+
+    $panel->entry();
+});
+```
+
+Note:
+
+- The HTTP method `POST` and `GET` both should be applied to your website. 
+- `POST` method is needed for solving CAPTCHA by users who were temporarily blocked.
+
+That's it.
+
+
+### Slim 3
+
+#### (1) Add the firewall middleware in your application.
+
+Shieldon has a integration class ready for this middleware, just use it by the following step.
+
+Example:
+```php
+$app->add(new \Shieldon\Firewall\Integration\Slim3);
+```
+
+For example, if you are using Slim3 skeleton, the code in `middleware.php` will look like this:
+
+Example:
 
 ```php
-require __DIR__ . '/../vendor/autoload.php';
+<?php
 
-// Implement Shieldon Firewall.
-new \Shieldon\Integration\Bootstrapper();
+use Slim\App;
+
+return function (App $app) {
+    $app->add(new \Shieldon\Firewall\Integration\Slim3);
+    $app->add(new \Slim\Csrf\Guard);
+};
+```
+
+
+#### (2) Create a route for control panel.
+
+For example, if you are using Slim 4 framework, the code should look like this. Then you can access the URL `https://yourwebsite.com/firewall/panel/` to login to control panel.
+
+Example:
+
+```php
+$app->map(['GET', 'POST'], '/firewall/panel[/{params:.*}]', function (Request $request, Response $response, array $args) {
+
+    $firewall = new \Shieldon\Firewall\Firewall($request);
+
+    // The directory in where Shieldon Firewall will place its files.
+    // Must be the same as firewallMiddleware.
+    $firewall->configure(__DIR__ . '/../cache/shieldon_firewall');
+
+    // The base url for the control panel.
+    $firewall->controlPanel('/firewall/panel/');
+
+    $panel = new \Shieldon\Firewall\Panel();
+
+    // Begin - Need to set up CSRF fields if you have enabled Slim-CSRF
+
+    $csrf = new \Slim\Csrf\Guard();
+    $nameKey = $csrf->getTokenNameKey();
+    $valueKey = $csrf->getTokenValueKey();
+
+    $csrfName = $request->getAttribute('csrf_name');
+    $csrfVale = $request->getAttribute('csrf_value');
+
+    $panel->csrf(
+        [$nameKey => $csrfName],
+        [$valueKey => $csrfVale]
+    );
+
+    // End - Slim-CSRF
+
+    $panel->entry();
+});
 ```
 
 That's it.
 
-*Reminder*:
+## Controll Panel
 
-To prevent `session_start` conflicts, please start session safely in your `SessionMiddleware`
-
-```php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-```
-
-That's it.
-
-You can access the Firewall Panel by `/example/fiewall/panel`, to see the page, go to this URL in your browser.
+You can access the Firewall Panel by `/firewall/panel/`, to see the page, go to this URL in your browser.
 
 ```bash
-https://for.example.com/example/fiewall/panel
+https://yourwebsite.com/firewall/panel/
 ```
 
 The default login is `shieldon_user` and `password` is `shieldon_pass`. After logging in the Firewall Panel, the first thing you need to do is to change the login and password.

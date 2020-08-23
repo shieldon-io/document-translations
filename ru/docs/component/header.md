@@ -1,11 +1,11 @@
 # Header
 
-## `Shieldon\Component\Header`
+## `Shieldon\Firewall\Component\Header`
 
-- *return* self
+- **return** `self`
 
 ```php
-$header = new \Shieldon\Component\Header();
+$header = new \Shieldon\Firewall\Component\Header();
 $shieldon->setComponent($header);
 ```
 
@@ -13,7 +13,7 @@ $shieldon->setComponent($header);
 
 - Visitors without common header information will be blocked.
 
-```
+```php
 $header->setStrict(true);
 ```
 

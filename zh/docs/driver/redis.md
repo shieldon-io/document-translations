@@ -1,9 +1,9 @@
 # Redis
 
-## `Shieldon\Driver\RedisDriver`
+## `Shieldon\Firewall\Driver\RedisDriver`
 
-- *param* Redis $redis
-- *return* self
+- **param*** `Redis` $redis `-` The Redis instance.
+- **return** void
 
 Make sure you have installed PHP Redis extension and Redis server on your server. You should see something like the screenshot below in `php.ini`.
 ![](https://i.imgur.com/Ru74yN4.png)
@@ -11,16 +11,18 @@ Make sure you have installed PHP Redis extension and Redis server on your server
 Inject a Redis instance to Shieldon data driver.
 
 ```php
-$redisDriverInstance = new \Shieldon\Driver\RedisDriver($redisInstance));
+$redisDriver = new \Shieldon\Firewall\Driver\RedisDriver($redisInstance));
 ```
 
-例：
+Example:
 
 ```php
 $redisInstance = new \Redis();
 $redisInstance->connect('127.0.0.1', 6379); 
 
-$shieldon->setDriver(new \Shieldon\Driver\RedisDriver($redisInstance));
+$kernel->setDriver(
+    new \Shieldon\Firewall\Driver\RedisDriver($redisInstance)
+);
 ```
 
-大概是這樣囉。
+That's it.

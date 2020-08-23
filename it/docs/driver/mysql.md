@@ -1,15 +1,15 @@
 # MySQL
 
-## `Shieldon\Driver\MysqlDriver`
+## `Shieldon\Firewall\Driver\MysqlDriver`
 
-- *param* PDO $pdo
-- *param* boolean $debug  [default: false]
-- *return* self
+- **param** `PDO` $pdo `-` The PDO instance.
+- **param** `bool` $debug `false` Trun debug mode or not.
+- **return** `self`
 
 You have to inject a PDO instance to Shieldon data driver.
 
 ```php
-$mysqlDriverInstance = new \Shieldon\Driver\MysqlDriver($pdoInstance);
+$mysqlDriver = new \Shieldon\Firewall\Driver\MysqlDriver($pdoInstance);
 ```
 
 Example:
@@ -29,7 +29,7 @@ $pdoInstance = new \PDO(
     $db['pass']
 );
 
-$shieldon->setDriver( new \Shieldon\Driver\MysqlDriver($pdoInstance));
+$kernel->setDriver( new \Shieldon\Firewall\Driver\MysqlDriver($pdoInstance));
 ```
 
 That's it.

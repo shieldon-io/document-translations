@@ -1,11 +1,11 @@
 # UserAgent
 
-## `Shieldon\Component\UserAgent`
+## `Shieldon\Firewall\Component\UserAgent`
 
-- *return* self
+- **return** `self`
 
 ```php
-$agent = new \Shieldon\Component\UserAgent();
+$agent = new \Shieldon\Firewall\Component\UserAgent();
 $shieldon->setComponent($agent);
 ```
 
@@ -27,7 +27,7 @@ Default setting in blacklist.
 
 - Visitors with empty user-agent information will be blocked.
 
-```
+```php
 $agent->setStrict(true);
 ```
 

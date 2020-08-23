@@ -1,15 +1,15 @@
 # File
 
-## `Shieldon\Driver\FileDriver`
+## `Shieldon\Firewall\Driver\FileDriver`
 
-- *param* string $directory Directory path.
-- *return* self
+- **param** `string` $directory `-` Directory path.
+- **return** `self`
 
 Example:
 
 ```php
-$shieldon->setDriver(
-    new \Shieldon\Driver\FileDriver(BOOTSTRAP_DIR . '/../tmp/shieldon')
+$kernel->setDriver(
+    new \Shieldon\Firewall\Driver\FileDriver(BOOTSTRAP_DIR . '/../tmp/shieldon')
 );
 ```
 

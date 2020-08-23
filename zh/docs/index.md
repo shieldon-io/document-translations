@@ -1,45 +1,36 @@
 
-Shieldon 是一個專用於 PHP 的網站應用層防火牆 (WAF)，只要不到 10 分鐘，專家級的 PHP 開發者能用瞭解如果部暑 Shieldon 防火牆到他們的網站應用程式中。這個套件的目標是讓 PHP 社群更加安全，且極其容易使用。
+Shieldon is a Web Application Firewall (WAF) for PHP, with a beautiful and useful control panel that helps you easily manage the firewall rules and security settings.
 
-- 網站: [https://shieldon.io](https://shieldon.io/)
-- GitHub 專案庫:  [https://github.com/terrylinooo/shieldon](https://github.com/terrylinooo/shieldon)
+- Website: [https://shieldon.io](https://shieldon.io/)
+- GitHub repository:  [https://github.com/terrylinooo/shieldon](https://github.com/terrylinooo/shieldon)
+- WordPress plugin: [https://wordpress.org/plugins/wp-shieldon/](https://wordpress.org/plugins/wp-shieldon/)
 
-## 特色
+## Features
 
-- 對於搜尋引擎最佳化友善。
-- Http 型態的 DDOS 攻擊緩和。
-- 防砍站。
-- 線上工作階段控制。
-- 跨站腳本 (XSS) 防護。
-- 打斷弱點掃描。
-- 清除暴力攻擊。
-- IP 管理員。
-- 經由 WWW-Authenticate 保護網頁。
-- 詳細的統計表和曲線圖。
-- 當特定的事件發生時送出通知。支援的模組：
-    - Slack
-    - Telegram
-    - Line Notify
-- 系統防火牆的網頁介面 - iptables 及 ip6tables.
-- 更多的特色將持續開發...
+- SEO friendly, no impacts to SERP.
+- Http-type DDOS mitigation.
+- Anti-scraping.
+- Limit the amount of online users.
+- Cross-site scripting (XSS) protection.
+- Interrupting vulnerability scanning.
+- Eradicating brute force attacks.
+- IP manager.
+- Protecting pages via WWW-Authenticate.
+- Detailed statistics and charts.
+- Sending notifications to third-party services.
+- A Web UI for management of iptables, the system firewall.
 
-## 安裝
+## Installation
 
-使用 PHP Composer:
+Use PHP Composer:
 
 ```php
-composer require shieldon/shieldon
+composer require shieldon/shieldon ^2
 ```
 
-或者，下載或引入 Shieldon 自動載入器。
+## Implementing
 
-```php
-require 'Shieldon/autoload.php';
-```
-
-## 部署
-
-這裡是整合受歡迎的 PHP 框架的指南。
+Here are the guides to integrating with the popular PHP frameworks.
 
 - [Laravel](https://shieldon.io/en/guide/laravel.html)
 - [Symfony](https://shieldon.io/en/guide/symfony.html)
@@ -52,9 +43,9 @@ require 'Shieldon/autoload.php';
 - [Fuel](https://shieldon.io/en/guide/fuel.html)
 - [PHPixie](https://shieldon.io/en/guide/phpixie.html)
 
-## 防火牆面板
+## Firewall Panel
 
-Shieldon 提供一個虛擬化的使用者介面，稱為防火牆面板。藉由使用 Shieldon 防火牆，您可以容易地部署它到您的網站應用程式中。
+Shieldon provides a visualization UI called Firewall Panel. By using Shieldon Firewall, you can easily implement it on your web application.
 
 ![Firewall Panel](https://i.imgur.com/MELx6Vl.png)
 
@@ -63,60 +54,71 @@ Click [here](/demo/) to view demo.
 - user: `demo`
 - password: `demo`
 
-## 截圖
+## Screenshots
 
-只有一些截圖會列在下方。
-
-### 防火牆面板
-
-#### 驗證碼統計
-
-![驗證碼統計](https://i.imgur.com/tjc8mW8.png)
-
-#### 線上工作階段統計
-
-如果 `線上工作階段控制` 有啟用的話，您可以在這裡看到即時的資料。
-
-![](https://i.imgur.com/sfssPyj.png)
-
-#### 規則表
-
-您可以在這裡暫時封鎖使用者。
-
-![](https://i.imgur.com/5Vg2brX.png)
-
-#### 響應式
-
-Shieldon 的防火牆面板是全響應式的，所以您可以使用手機管理，即時您不在電腦前。
+Only a few screenshots are listed below.
 
 
-![響應式的防火牆面板](https://i.imgur.com/fUz9lZD.png)
+## Screenshots
 
-### 對話框
+Only a few screenshots are listed below.
 
-#### 暫時地封鎖用戶
+### Firewall Panel
 
-當使用者或者機器人們正試著在短時間內檢閱很多您的網站頁面，他們會被暫時地封鎖。用解決驗證碼的方式來解除封鎖。
+#### Captcha Stats
 
-![](https://i.imgur.com/rlsEwSG.png)
+![Captcha Statistics](https://i.imgur.com/tjc8mW8.png)
 
-#### 永久地封鎖使用者
+#### Online Session Stats
 
-當使用者被永久地封鎖。
+You can see the real-time data here if `Online Session Limit` is enabled.
 
-![](https://i.imgur.com/Qy1sADw.png)
+![Firewall Panel - Online Session Control](https://i.imgur.com/sfssPyj.png)
 
+#### Rule Table
 
-#### 線上工作階段控制
+You can temporarily ban a user here.
 
-當使用者到了線上工作階段的限制。
+![Firewall Panel - Rule Table](https://i.imgur.com/5Vg2brX.png)
 
-![](https://i.imgur.com/cAOKIY8.png)
+#### Responsive
 
-## 作者
+Shieldon's Firewall Panel is fully responsive, and you can manage it when you are not in front of your computer, using your mobile phone at any time.
 
-Shieldon 套件是由來自台灣的開發者 [Terry L.](https://terryl.in) 進行開方維護。
+![Responsive Firewall Panel](https://i.imgur.com/fUz9lZD.png)
 
-## 授權
+### Dialog
+
+#### Temporarily Ban a User
+
+When the users or robots are trying to view many your web pages in a short period of time, they will temporarily get banned. Get unbanned by solving a Catpcha.
+
+![Firewall Dialog 1](https://i.imgur.com/rlsEwSG.png)
+
+#### Permanently Ban a User
+
+When a user has been permanently banned.
+
+![Firewall Dialog 2](https://i.imgur.com/Qy1sADw.png)
+
+#### Online Session Control
+
+![Firewall Dialog 3](https://i.imgur.com/cAOKIY8.png)
+
+When a user has reached the online session limit.
+
+### Notification
+
+Provided by [Messenger](https://github.com/terrylinooo/messenger) library.
+
+![Telegram](https://i.imgur.com/3lqamO7.png)
+
+Send notification via Telegram API.
+
+## Author
+
+Shieldon library is brought to you by [Terry L.](https://terryl.in) from Taiwan.
+
+## License
 
 MIT

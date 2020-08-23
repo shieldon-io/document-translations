@@ -1,17 +1,17 @@
 # TrustedBot
 
-## `Shieldon\Component\TrustedBot`
+## `Shieldon\Firewall\Component\TrustedBot`
 
-- *return* self
+- **return** `self`
 
 ```php
-$robot = new \Shieldon\Component\TrustedBot();
+$robot = new \Shieldon\Firewall\Component\TrustedBot();
 $shieldon->setComponent($robot);
 ```
 
-在白名單內的預設值。
+Default setting in whitelist.
 
-| 名稱 | 反解主機名稱 |
+| name | Rdns |
 | --- | --- |
 | google | .googlebot.com |
 | google | .google.com |
@@ -26,63 +26,71 @@ $shieldon->setComponent($robot);
 | yandex | .yandex.ru |
 | w3 | .w3.org |
 
-### setStrict
+### setStrict(`$bool`)
 
-- *param* boolean `$bool` 設為 true 以啟用嚴格模式, false 反之亦然。
-- *return* void
+- **param** bool `$bool` Set true to enble strict mode, false to disable it overwise.
+- **return** `void`
 
+Example:
 ```php
 $robot->setStrict(true);
 ```
 
-### isAllowed
+### isAllowed()
 
-- *return* bool
+- **return** `bool`
 
+Example:
 ```php
 $result = $robot->isAllowed();
 ```
 
-### isDenied
+### isDenied()
 
 (deprecated)
 
-### isGoogle
+### isGoogle()
 
-- *return* bool
+- **return** `bool`
 
+Example:
 ```php
 $result = $robot->isGoogle();
 ```
 
-### isYahoo
-- *return* bool
+### isYahoo()
+- **return** `bool`
 
+Example:
 ```php
 $result = $robot->isYahoo();
 ```
 
-### isBing
-- *return* bool
+### isBing()
+- **return** `bool`
 
+Example:
 ```php
 $result = $robot->isBing();
 ```
 
-### addItem
+### addItem(`$userAgent`, `$rdns`)
 
-- *param* string `$userAgent` 部分的用使用者代理的字串。
-- *param* string `$rdns` IP 反解的主機名稱。
-- *return* void
+- **param** `string` $userAgent `-` Part of user-agent string
+- **param** `string` $rdns `-` IP resolved hostname.
+- **return** `void`
 
+Example:
 ```php
 $robot->addItem('google', '.googlebot.com');
 ```
 
-## 嚴格模式
+## Strict Mode
 
-```
+- IP resolved hostname and IP address must match.
+
+Example:
+```php
 $robot->setStrict(true);
 ```
 
-- IP 反解主機名稱 (RDNS) 和 IP 位址須互相吻合。

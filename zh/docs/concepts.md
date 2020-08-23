@@ -1,14 +1,14 @@
-# 運作概念
+# Concepts
 
-這是關於 Shielon 如何運作的基本概念。
+This is basic concepts about how Shieldon works.
 
-![Shieldon 防火牆運作概念](https://i.imgur.com/pRbI7gg.png)
+![Shieldon Firewall Concepts](https://i.imgur.com/pRbI7gg.png)
 
 
-- 網路層防火牆，例如 CloudFlare。
-- 系統層防火牆，例如 iptables 套件。
-- 使用防火牆軟體在應用程式層，我們能夠部署 Shieldon 在您的應用程式的初始階段，大部份位於 Composer 自動載入器之後。
-- Shieldon 分析您全部的 HTTP 及 HTTPS 連線請求。
-- 只要 Shieldon 偵測到連線請求的奇怪行為，Shieldon 會暫時地封鎖它並跳出驗證碼讓它解除封鎖。
-- 如果連線請求連續失敗很多次 (取決於您的設定值)，它會在目前的資料週期被永久的封鎖。
-- 如果連線請求已經被永久封鎖，但它然一直連接您的網站，把它丟到系統層防火牆 - iptables.
+- The network-layer firewall such as CloudFlare.
+- The system-layer firewall such as iptables module.
+- To use firewall software in the Web application layer, we are capable of implementing Shieldon in a very early stage of your APP, mostly just after Composer autoloader.
+- Shieldon analyzes all your HTTP and HTTPS requests.
+- Once Shieldon has detected strange behaviors of a request, Shieldon will temporarily ban them and prompt them CAPTCHA for them to unban.
+- If a request fails in a row many times (depends on your setting), they will be permanently banned in current data circle.
+- If a request has been permanently banned, but they still access your page, drop them in System-layer firewall - iptables.

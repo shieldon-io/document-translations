@@ -1,135 +1,365 @@
-# Core APIs
+# Kernel APIs
 
-- setCaptcha
-- setChannel
-- setClosure
-- setComponent
-- setDriver
-- setExcludedUrls
-- setFilter
-- setFilters
-- setProperty
-- setProperties
-- setMessenger
-- setIp
+## Kernel
+
+```
+Shieldon\Firewall\Kernel
+```
+
+- ban
 - getCurrentUrl
 - managedBy
-- outputJsSnippet
-- captchaResponse
-- setView
-- createDatabase
-- ban
-- unban
-- limitSession
 - run
+- setClosure
+- exclude
+- setExcludedUrls
+- setLogger
+- setProperty
+- setProperties
+- setStrict
+- unban
 
-這些公開的 API 可以串成鏈，但 `SetDriver` 必須在第一位，而 `run` 必須在最後一個。
+### ban(`$ip`)
 
-## 可鏈式
+- **param** `string` $ip `-` Single IP address.
+- **return** `void`
 
-### setCaptcha
+Ban an IP address.
 
-- *param* CaptchaInterface
-- *since* 2.0.0
-- *return* self
-
-更多詳細用法，請參閱 [Captcha](captcha/index.md) 段落。
-
+Example:
 ```php
-$shieldon->setCaptcha(new \Shieldon\Captcha\Recaptcha([
-    'key' => '6LfkOaUUAAAAAH-AlTz3hRQ25SK8kZKb2hDRSwz9',
-    'secret' => '6LfkOaUUAAAAAJddZ6k-1j4hZC1rOqYZ9gLm0WQh',
-    'version' => 'v2',
-    'lang' => 'en',
-]));
+$kernel->ban('33.125.12.87');
 ```
 
-### setChannel
+### getCurrentUrl()
 
-- *param* string `$channel` 頻道名稱
-- *return* self
+- **return** `string`
 
+Return current URL. This method equals `$_SERVER['REQUEST_URI']`.
+
+Example:
 ```php
-$shieldon->setChannel('web_project');
-
-// Start new shieldon each day.
-$shieldon->setChannel('web_project_' . date('Ymd'));
+echo $kernel->getCurrentUrl();
 ```
 
-### setClosure
+### managedBy(`$type`)
 
-- *param* string `$key`
-- *param* Closure `$closure`
-- *since* 3.0.0
-- *return* self
+- **param** `string` $type `""` managed | config | demo
+- **return** `void`
 
-設定一個封閉函式。
+Tell Shieldon what type the Shieldon is managed by.
+This setting only influences the Firewall Panel.
+
+Example:
+```php
+$kernel->managedBy('demo');
+```
+
+### run()
+
+- **return** `int`
+
+Run the checking process.
+
+Reponse code:
+
+| constant | value | reason |
+| --- | --- | --- |
+| `RESPONSE_DENY` | 0 | Banned permanently. |
+| `RESPONSE_ALLOW` | 1 | Passed. |
+| `RESPONSE_TEMPORARILY_DENY` | 2 | Banned temporarily and can be unbaned by solving Captcha. |
+| `RESPONSE_LIMIT` | 3 | Stopped due to reaching online session limit. |
+
+Example:
+```php
+$result = $kernel->run();
+```
+
+### setClosure(`$key`, `$closure`)
+
+- **param** `string` $key `-` The identification name of the closure.
+- **param** `Closure` $closure `-` The closure function.
+- **return** `void`
+
+Set a closure function.
+
+Example:
 
 ```php
-$shieldon->setClosure('www_authenticate', function() use ($authHandler, $authenticateList) {
+$kernel->setClosure('www_authenticate', function() use ($authHandler, $authenticateList) {
     $authHandler->set($authenticateList);
     $authHandler->check();
 });
 ```
 
-### setComponent
+### exclude(`$uriPath`)
 
-- *param* ComponentInterface
-- *return* self
+- **param** `string` $uriPath `-` The path component of a URI.
+- **return** `void`
 
-```php
-$shieldon->setComponent(new \Shieldon\Component\Ip());
-```
+Set a URL you want them excluded them from protection.
 
-### setDriver
-
-- *param* DriverProvider
-- *return* self
+Example:
 
 ```php
-$dbLocation = APPPATH . 'cache/shieldon.sqlite3';
-$pdoInstance = new \PDO('sqlite:' . $dbLocation);
-$shieldon->setDriver(new \Shieldon\Driver\SqliteDriver($pdoInstance));
+$kernel->exclude('/firewall/panel');
 ```
 
-### setExcludedUrls
+### setExcludedUrls(`$urls`)
 
-- *param* array `$urls`
-- *since* 3.0.0
-- *return* self
+- **param** `array` $urls `-` The collection of URLs.
+- **return** `void`
 
-設定要排除在保護之外的網址列表。
+Set the URLs you want them excluded them from protection.
 
+Example:
 ```php
 $list = [
     '/example/1',
     '/wp-login.php',
 ];
 
-$shieldon->setExcludedUrls($list);
+$kernel->setExcludedUrls($list);
 ```
 
-### setFilter
+### setLogger(`$logger`)
 
-- *param* string `$filterName` Sheidlon 過濾器的名稱
-- *param* bool `$value` true|false
-- *since* 3.0.0
-- *return* self
+- **param** `ActionLogger` $logger `-` Record action logs for users.
+- **return** `void`
+
+Set an action log logger.
+
+Example:
 
 ```php
-$shieldon->setFilter('session', false);
-$shieldon->setFilter('cookie', false);
-$shieldon->setFilter('referer', true);
-$shieldon->setFilter('frequency', false); 
+$kernel->setLogger(
+    new \Shieldon\Firewall\Log\ActionLogger(
+        BOOTSTRAP_DIR . '/../tmp/shieldon'
+    )
+);
 ```
 
-### setFilters
+### setProperty(`$key`, `$value`)
 
-- *param* array `$settings` 過濾器設定
-- *return* self
+- **param** `string` $key `-` The key name for the property.
+- **param** `mixed` $value `-` The value of the key.
+- **return** `void`
+
+Example:
 
 ```php
-$shieldon->setFilters([
+$kernel->setProperty('time_unit_quota', [
+    's' => 4,
+    'm' => 20, 
+    'h' => 60, 
+    'd' => 240,
+]);
+```
+
+The explanation of settings you cand find [here](http://shieldon.io/en/docs/configuration.html).
+
+### setProperties(`$settings`)
+
+- **param** `array` $settings `-` The settings.
+- **return** `void`
+
+Example:
+
+```php
+$kernel->setProperties($settings);
+```
+
+### setStrict(`$bool`)
+
+- **param** `bool` $bool `-` Set true to enble strict mode, false to disable it overwise.
+- **return** `void`
+
+Example:
+```php
+$kernel->setStrict(true);
+```
+
+### unban(`$ip`)
+
+- **param** `string` $ip `-` An IP address.
+- **return** `void`
+
+Unban an IP address.
+
+Example:
+
+```php
+$kernel->unban('33.33.33.33');
+```
+
+---
+
+## Captcha Trait
+
+```
+Shieldon\Firewall\Kernel\CaptchaTrait
+```
+
+- setCaptcha
+- captchaResponse
+- disableCaptcha
+
+### setCaptcha(`$instance`)
+
+- **param** `CaptchaInterface` $instance `-` The Captcha instance.
+- **return** `void`
+
+Set a captcha. For deatiled usages, please see [Captcha](captcha/index.md) section.
+
+```php
+$kernel->setCaptcha(
+    new \Shieldon\Firewall\Captcha\Recaptcha([
+        'key' => '6LfkOaUUAAAAAH-AlTz3hRQ25SK8kZKb2hDRSwz9',
+        'secret' => '6LfkOaUUAAAAAJddZ6k-1j4hZC1rOqYZ9gLm0WQh',
+        'version' => 'v2',
+        'lang' => 'en',
+    ])
+);
+```
+
+### captchaResponse()
+
+- **return** `bool`
+
+Return the result from Captchas.
+`true`: Captcha is solved successfully, `false` overwise.
+
+Example:
+
+```php
+$result = $this->captchaResponsse();
+```
+
+### disableCaptcha()
+
+- **return** `void`
+
+Disable all Captcha modules. This method is for unit testing purpose.
+
+---
+
+## Component Trait
+
+```
+Shieldon\Firewall\Kernel\ComponentTrait
+```
+
+- setComponent
+- getComponent
+- disableComponents
+
+### setComponent(`$instance`)
+
+- **param** `ComponentProvider` $instance `-` The component instance.
+- **return** `void`
+
+Set a commponent.
+
+Example:
+```php
+$kernel->setComponent(
+    new \Shieldon\Firewall\Component\UserAgent()
+);
+```
+
+### getComponent()
+
+- **param** `string` $name `-` The component's class name.
+- **return** `void` | `ComponentProvider`
+
+Get a component instance from component's container.
+
+Example:
+
+```php
+$useragent = $kernel->getComponent('UserAgent');
+```
+
+### disableComponents()
+
+- **return** `void`
+
+Disable all components even they have been set up ready.
+
+Example:
+
+```php
+$kernel->disableComponents();
+```
+
+---
+
+## Driver Trait
+
+```
+Shieldon\Firewall\Kernel\DriverTrait
+```
+
+- setDriver
+- setChannel
+- disableDbBuilder
+
+### setDriver(`$driver`)
+
+- **param** `DriverProvider` $driver `-` Query data from the driver you choose.
+- **return** `void`
+
+Example:
+
+```php
+$dbLocation = APPPATH . 'cache/shieldon.sqlite3';
+$pdoInstance = new \PDO('sqlite:' . $dbLocation);
+
+$kernel->setDriver(
+    new \Shieldon\Firewall\Driver\SqliteDriver($pdoInstance)
+);
+```
+
+### setChannel(`$channel`)
+
+- **param** `string` $channel `-` Specify a channel.
+- **return** `void`
+
+Example:
+
+```php
+$kernel->setChannel('web_project');
+```
+
+### disableDbBuilder()
+
+- **return** `void`
+
+Disable building database automatically.
+
+
+Example:
+```php
+$kernel->disableDbBuilder();
+```
+
+## Filter Trait
+
+```
+Shieldon\Firewall\Kernel\FilterTrait
+```
+
+- setFilters
+- setFilter
+- disableFilters
+
+### setFilters(`$settings`)
+
+- **param** `array` $settings `-` Filter settings.
+- **return** `void`
+
+```php
+$kernel->setFilters([
     'session' => true,
     'cookie' => true,
     'referer' => true,
@@ -137,61 +367,65 @@ $shieldon->setFilters([
 ]);
 ```
 
-預設的設定值：
+### setFilter(`$filterName`, `$value`)
 
-| 鍵值| 類別 | 值 | 說明 |
-| --- | --- | --- | --- |
-| session | boolean | true | 檢查 PHP 工作階段 |
-| cookie | boolean | **false** | 檢查由 JavaScript　產生的 Cookie |
-| referer | boolean | true | 檢查 `HTTP_REFERER` |
-| frequency | boolean | true | 檢查 `time_unit_quota` 設定 |
+- **param** `string` $filterName `-` The filter's name.
+- **param** `bool` $value `-` True for enabling the filter, overwise.
+- **return** `void`
 
-Cookie 過濾器預設是 false，因為您必須輸出 JavaScript 的程式碼片段到您的網站中。JavaScript 的程式碼片段由　`outputJsSnippet` 產生。
-
-查看 `outputJsSnippet` 瞭解用法。
-
-### setProperty
-
-- *param* string `$key`
-- *param* mixed `$value`
-- *return* self
+Example:
 
 ```php
-$shieldon->setProperty('time_unit_quota', [
-    's' => 4,
-    'm' => 20, 
-    'h' => 60, 
-    'd' => 240
-]);
-```
-預設的設定值：
-
-| 鍵值 | 類別 | 值 |
-| --- | --- | --- |
-| time_unit_quota | array |  `['s' => 2, 'm' => 10, 'h' => 30, 'd' => 60]` |
-| time_reset_limit | integer | 3600 |
-| interval_check_referer | integer | 5 |
-| interval_check_session | integer | 30 |
-| limit_unusual_behavior | array | `['cookie' => 5, 'session' => 5, 'referer' => 10]` |
-| cookie_name | string | "ssjd" |
-| cookie_domain | string | " |
-| cookie_value | string | "1" |
-
-這些設定值的解釋請參考 [這裡](http://shieldon.io/zh/docs/configuration.html).
-
-### setProperties
-
-- *param* array `$settings`
-- *return* self
-
-```
-$shieldon->setProperties($settings);
+$kernel->setFilter('session', false);
+$kernel->setFilter('cookie', false);
+$kernel->setFilter('referer', true);
+$kernel->setFilter('frequency', false); 
 ```
 
-### setIp
+Default settings:
 
-- *param* string `$ip`
-- *return* self
+| key | type | value | description |
+| --- | --- | --- | --- |
+| session | bool | true | Check session created by Shieldon session driver. |
+| cookie | bool | **false** | Check cookie generated by JavaScript. |
+| referer | bool | true | Check `HTTP_REFERER` |
+| frequency | bool | true | Check `time_unit_quota` setting. |
+
+The Cookie filter is `false` by default, because you have to output the JavaScript snippet to your web pages. The snippet created by `getJavascript()` will generate cookie by JavaScript.
+
+Check out `getJavascript()` for usage.
+
+### disableFilters()
+
+- **return** `void`
+
+Disable all filters even they have been set up ready.
+
+```php
+$kernel->disableFilters();
+```
+
+---
+
+## IP Trait
+
+```
+Shieldon\Firewall\IpTrait
+```
+
+- setIp
+- getIp
+- setRdns
+- getRdns
+
+### setIp(`$ip`)
+
+- **param** `string` $ip `-` An IP address.
+- **return** `void`
+
+Set an IP address.
+
+Example:
 
 ```php
 // Here is an example, cature real vistor IP from CloudFlare.
@@ -199,13 +433,61 @@ $realIp = $_SERVER['HTTP_CF_CONNECTING_IP'];
 
 // If you use a CDN serive on your website, 
 // make sure to cature the real vistor IP, overwise users will get banned.
-$shieldon->setIp($realIp);
+$kernel->setIp($realIp);
 ```
 
-### setMessenger
+### getIp()
 
-- *param* MessengerInterface `$instance`
-- *return* self
+- **return** `string`
+
+Get current set IP.
+
+Example:
+
+```php
+$ip = $kernel->getIp();
+```
+
+### setRdns(`$rdns`)
+
+- **param** `string` $rdns `-` Reserve DNS record for that IP address.
+- **return** `void`
+
+
+Set a RDNS record for the check.
+
+Example:
+
+```php
+$kernel->setRdns('localhost');
+```
+
+### getRdns()
+
+- **return** `string`
+
+Get IP resolved hostname.
+
+```php
+$rdns = $kernel->getRdns();
+```
+
+---
+
+## Messenger Trait
+
+```
+Shieldon\Firewall\Kernel\MessengerTrait
+```
+
+- setMessenger
+
+### setMessenger(`$instance`)
+
+- **param** `MessengerInterface` $instance `-` The messenger instance.
+- **return** `void`
+
+Example:
 
 ```php
 $apiKey = '981441296:AAGCcgv_NETMdWQCBTaMOk_yoMfax5EV7YQ';
@@ -213,138 +495,117 @@ $channel = '@your_channel';
 
 $telegramMessenger = new \Messenger\Telegram($apiKey, $channel);
 
-$shieldon->setMessenger($telegramMessenger);
+$kernel->setMessenger($telegramMessenger);
 ```
 
-### setView
+---
 
-- *param* string `$html` HTML 文字字串
-- *param* string `$type` 頁面類別
-- *return* self
-
-```php
-$htmlText = '<html>...bala...{{captcha}} ...bala...</html>';
-$this->setView($htmlText, 'stop');
-```
-
-*$type*
-
-| 類別  | 說明 |
-| --- | --- | --- | --- |
-| stop | 當使用者被暫時性封鎖時顯示的頁面。 | 
-| limit | 當使用者因為線上人數限制，而停留顯示的頁面。 |
-| deny | 當使用者在黑名單中，被拒絕的頁面。 | 
-
-*樣版標籤*
-
-- `{{captcha}}`: 給 **stop** 頁面用的驗證碼表單 (必要)
-- `{{online_info}}`: 顯示於 **limit** 頁面的線上工作階段資訊。
-- `{{lineup_info}}`: 顯示於　**limit** 排隊資訊 頁面。
-
-### createDatabase
-
-- *param* bool `$option` true or false [預設值: true]
-- *return* self
-
-```php
-$this->createDatabase(false);
-```
-
-
-### ban
-
-- *param* string `$ip` 單個 IP 位址
-- *return* self
-
-```php
-$shieldon->ban('33.125.12.87');
-```
-
-### unban
-
-- *param* string `$ip` 單個 IP 位址
-- *return* self
-
-```php
-$shieldon->unban('33.125.12.87');
+## Template Trait
 
 ```
-
-### limitSession
-
-- *param* integer `$amount` 線上訪客的最大數量
-- *param* integer `$period` 期間 （單位：秒）
-- *return* self
-
-```php
-$shieldon->limitSession(500, 300);
+Shieldon\Firewall\Kernel\TemplateTrait
 ```
 
-## Non-chainable
+- setDialog
+- respond
+- setTemplateDirectory
+- getJavascript
 
-### getCurrentUrl
+### setDialog(`$settings`)
 
-- *since* 3.0.0
-- *return* string
+- **param** `array` $settings `-` The dialog UI settings.
+- **return** `void`
 
-回傳目前的網址。
-這個方法等同於系統變數 $_SERVER['REQUEST_URI']
+Customize the dialog UI.
 
-```php
-echo $shieldon->getCurrentUrl();
-```
-
-### managedBy
-
-- *param* string `Type` managed|config|demo
-- *return* void
-
-告訴 Shieldon 被什麼形式管理。這個設定只影響防火牆面板。
+Example:
 
 ```php
-$list = [
-    '/example/1',
-    '/wp-login.php',
+$settings = [
+    'lang'             => 'en',
+    'background_image' => '',
+    'bg_color'         => '#ffffff',
+    'header_bg_color'  => '#212531',
+    'header_color'     => '#ffffff',
+    'shadow_opacity'   => '0.2',
 ];
 
-$shieldon->managedBy('demo');
+$kernel->setDialog($settings);
 ```
 
-### outputJsSnippet
+### respond()
 
-- *return* string JavaScript 字串
+- **return** `ResponseInterface`
 
-如果 Cookie 過濾器有啟用的話，這個方法必須使用於輸出 JavaScript 程式碼片段，並放到前端網頁中。
+Respond the result.
+
+Example:
+
+```php
+$response = $kernel->respond();
+```
+
+### setTemplateDirectory(`$directory`)
+
+- **param** `array` $directory `-` The directory in where the template files are placed.
+- **return** `void`
+
+Set the frontend template directory. You can copy [those files](https://github.com/terrylinooo/shieldon/tree/2.x/templates/frontend) to a dictionary, and modify them for customizing the look of dialogs.
+
+Example:
+
+```php
+$kernel->setTemplateDirectory(YOUR_DIRECTORY_PATH);
+```
+
+### getJavascript()
+
+- **return** `string`
+
+Print a JavaScript snippet in your webpages.
+
+This snippet generate cookie on client's browser,then we check the cookie to identify the client is a rebot or not.
 
 ```php
 // Output this variable in your page template.
-$jsCode = $shieldon->outputJsSnippet();
+$jsCode = $kernel->getJavascript();
 ```
 
-### captchaResponse
+## Session
 
-- *return* boolean
+```
+Shieldon\Firewall\Kernel\SessionTrait
+```
 
-true: 驗證碼有被成功解決掉。
-false: 反之亦然。
+- limitSession
+- getSessionCount
+
+### limitSession(`$count`, `$period`, `$unique`)
+
+- **param** `int` $count `1000` The amount of online users. If reached, users will be in queue.
+- **param** `int` $period `300` The period of time allows users browsing.  (unit: second)
+- **param** `bool` $unique `false` Allow only one session per IP address.
+- **return** `void`
+
+Limt online sessions.
+
+Example:
 
 ```php
-$result = $this->captchaResponsse();
+$kernel->limitSession(100, 300);
 ```
+   
+### getSessionCount()
 
-### run
+- **return** `int`
 
-- *return* integer
+Get online people count. If enable limitSession.
 
-回應碼：
+Example:
 
-| 常數 | 值 | 原因 |
-| --- | --- | --- |
-|RESPONSE_DENY | 0 | 永久性封鎖。 |
-|RESPONSE_ALLOW | 1 | 通過。 |
-|RESPONSE_TEMPORARILY_DENY | 2 | 暫時性封鎖。 |
-|RESPONSE_LIMIT | 3 | 被限制停留頁面，因為達到線上人數限制。 |
- 
 ```php
-$result = $shieldon->run();
+$count = $kernel->getSessionCount();
 ```
+
+
+
