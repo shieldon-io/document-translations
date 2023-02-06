@@ -1,6 +1,6 @@
 # Slim
 
-Slim framework is one of my favorites. Since Slim is a mirco framework, implementing Shieldon Firewall is easy as well. Without further ado, let's get started.
+Slim framework is one of my favorites. Since Slim is a micro framework, implementing Shieldon Firewall is easy as well. Without further ado, let's get started.
 
 ![Firewall in Slim Framework](https://shieldon.io/images/home/slim-framework-firewall.png)
 
